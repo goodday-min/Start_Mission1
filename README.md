@@ -73,10 +73,12 @@ ls -l                    # [변경 후] 권한 확인
 
 ### 📷 증거 캡처
 **변경 전**
-![권한 변경 전](./images/step2_before.png)
+<img width="687" height="136" alt="image" src="https://github.com/user-attachments/assets/b587d7dc-7eab-421f-a63a-58d599364685" />
+
 
 **변경 후**
-![권한 변경 후](./images/step2_after.png)
+<img width="687" height="142" alt="image" src="https://github.com/user-attachments/assets/9566e7f4-4bb2-410f-be89-f90545d1d2fc" />
+
 
 ---
 
@@ -97,5 +99,38 @@ ls -l                    # [변경 후] 권한 확인
 | 644 | rw-r--r-- | 소유자 읽기·쓰기, 나머지 읽기 |
 
 
-<img width="681" height="391" alt="image" src="https://github.com/user-attachments/assets/17e4683a-61ff-4e08-8596-da9af4d79633" />
+## STEP 3. Docker 설치 점검 (요구사항 4)
+
+| 명령어 | 설명 |
+|--------|------|
+| `docker --version` | 설치된 Docker의 버전 확인 |
+| `sudo service docker start` | Docker 서비스(데몬) 시작 |
+| `sudo docker info` | Docker 전체 시스템 정보 조회 |
+
+### 💻 실행 결과
+
+```bash
+$ docker --version
+Docker version 29.1.3, build 29.1.3-0ubuntu4.1
+
+$ sudo service docker start
+
+$ sudo docker info
+Client:
+ Version:    29.1.3
+ Context:    default
+ Debug Mode: false
+```
+
+> 📸 실행 결과 캡처
+> <img width="741" height="287" alt="image" src="https://github.com/user-attachments/assets/2cd84ae9-5107-4d24-b4ab-2f57e6d055e1" />
+
+### 🔍 개념 정리
+
+- **Docker**: 애플리케이션을 **컨테이너** 단위로 패키징하여 어디서든 동일하게 실행할 수 있게 해주는 플랫폼
+- **`docker --version`**: 클라이언트 버전만 간단히 확인
+- **`service docker start`**: Docker 데몬(백그라운드 서비스)을 실행하는 명령
+  - WSL 환경에서는 부팅 시 자동 실행되지 않아 수동으로 시작해야 할 수 있음
+- **`docker info`**: 클라이언트/서버 버전, 플러그인, 컨테이너 수 등 상세 정보 확인
+
 
