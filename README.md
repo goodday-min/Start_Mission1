@@ -134,3 +134,131 @@ Client:
 - **`docker info`**: 클라이언트/서버 버전, 플러그인, 컨테이너 수 등 상세 정보 확인
 
 
+# Docker 기본 운영 명령 수행 (요구사항 5)
+
+## 1. 이미지(Image) 관련
+
+### 1) 이미지 다운로드
+```bash
+docker pull nginx:latest
+```
+- `pull`: 레지스트리(기본 Docker Hub)에서 이미지를 받아옵니다.
+- `nginx:latest`: `이미지명:태그` 형식. 태그 생략 시 `latest`.
+
+### 2) 이미지 목록 확인
+```bash
+docker images
+```
+출력 예시:
+```
+REPOSITORY   TAG       IMAGE ID       CREATED       SIZE
+nginx        latest    xxxxxxxxxxxx   2 weeks ago   187MB
+```
+- **IMAGE ID**: 이미지 고유 식별자
+- **SIZE**: 이미지 용량
+
+---
+
+## 2. 컨테이너(Container) 관련
+
+### 1) 컨테이너 실행
+```bash
+docker run -d --name web -p 8080:80 nginx
+```
+- `-d`: 백그라운드(detached) 실행
+- `--name web`: 컨테이너 이름 지정
+- `-p 8080:80`: 호스트 8080 → 컨테이너 80 포트 연결
+
+### 2) 실행 중인 컨테이너 목록
+```bash
+docker ps
+```
+
+### 3) 전체 컨테이너 목록 (중지된 것 포함)
+```bash
+docker ps -a
+```
+출력 예시:
+```
+CONTAINER ID   IMAGE   COMMAND   STATUS         PORTS                  NAMES
+xxxxxxxxxxxx   nginx   "..."     Up 2 minutes   0.0.0.0:8080->80/tcp   web
+```
+
+### 4) 컨테이너 중지
+```bash
+docker stop web
+```
+
+---
+
+## 3. 운영(모니터링) 관련
+
+### 1) 로그 확인
+```bash
+docker logs web
+docker logs -f web      # 실시간 로그 (follow)
+```
+- 애플리케이션 표준 출력/에러를 확인할 수 있어 디버깅에 유용합니다.
+
+### 2) 리소스 사용량 확인
+```bash
+docker stats
+docker stats web        # 특정 컨테이너만
+docker stats --no-stream   # 한 번만 출력 후 종료 (문서화에 편리)
+```
+출력 예시:
+```
+CONTAINER ID   NAME   CPU %   MEM USAGE / LIMIT   NET I/O     BLOCK I/O
+xxxxxxxxxxxx   web    0.00%   3.5MiB / 1.9GiB     1.2kB/0B    0B/0B
+```
+- `stats`는 실시간 갱신됩니다. 종료는 `Ctrl + C`.
+
+# Docker 핵심 개념 정리
+
+## 0. Docker란?
+- 애플리케이션을 **컨테이너**라는 격리된 공간에서 실행하는 가상화 기술입니다.
+- 실행 환경(라이브러리, 설정 등)을 **이미지**로 묶어두기 때문에, "내 PC에서는 되는데..." 문제를 줄여줍니다.
+
+---
+
+## 1. 이미지(Image)
+- 컨테이너를 만들기 위한 **설계도 / 템플릿**입니다.
+- 애플리케이션 코드 + 실행에 필요한 라이브러리·설정이 포함된 **읽기 전용** 파일입니다.
+- 한 개의 이미지로 **여러 개의 컨테이너**를 만들 수 있습니다.
+- 예: `nginx` 이미지 → 웹 서버 컨테이너 여러 개 생성 가능
+
+> 비유: 이미지는 '붕어빵 틀', 컨테이너는 '찍어낸 붕어빵'
+
+---
+
+## 2. 컨테이너(Container)
+- 이미지를 실행한 **실제 동작 중인 인스턴스**입니다.
+- 서로 격리되어 있어 한 컨테이너의 문제가 다른 컨테이너에 영향을 주지 않습니다.
+- 생성 → 실행 → 중지 → 삭제의 **생명주기(Life Cycle)** 를 가집니다.
+
+| 상태 | 설명 |
+|------|------|
+| Created | 생성됐지만 아직 실행 전 |
+| Up (Running) | 실행 중 |
+| Exited (Stopped) | 중지됨 |
+
+---
+
+## 3. 모니터링(Monitoring)
+- 컨테이너가 **정상 동작하는지, 자원을 얼마나 쓰는지** 확인하는 운영 활동입니다.
+- 주요 관찰 대상:
+  - **로그(logs)**: 애플리케이션의 출력·에러 메시지 → 문제 원인 파악
+  - **리소스(stats)**: CPU·메모리·네트워크 사용량 → 성능·부하 확인
+
+---
+
+## 4. 전체 흐름 한눈에 보기
+```
+docker pull   →  이미지 다운로드
+docker images →  이미지 목록 확인
+docker run    →  이미지로 컨테이너 생성·실행
+docker ps     →  실행 중 컨테이너 확인
+docker logs   →  동작 로그 확인
+docker stats  →  리소스 사용량 확인
+docker stop   →  컨테이너 중지
+```
