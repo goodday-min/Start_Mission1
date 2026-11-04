@@ -342,25 +342,25 @@ docker stop web
 
 ## 3. 운영(모니터링) 관련
 
-### 1) 로그 확인
+✅ 1. 로그 확인
 ```bash
 docker logs web
 docker logs -f web      # 실시간 로그 (follow)
 ```
 - 애플리케이션 표준 출력/에러를 확인할 수 있어 디버깅에 유용합니다.
 
-### 2) 리소스 사용량 확인
+> docker logs web 실행 화면  
+<img width="1172" height="350" alt="image" src="https://github.com/user-attachments/assets/50cd31ed-dd25-4116-81d3-d1801aad2dae" />
+
+
+✅ 2. 리소스 사용량 확인
 ```bash
 docker stats
 docker stats web        # 특정 컨테이너만
 docker stats --no-stream   # 한 번만 출력 후 종료 (문서화에 편리)
 ```
-출력 예시:
-```
-CONTAINER ID   NAME   CPU %   MEM USAGE / LIMIT   NET I/O     BLOCK I/O
-xxxxxxxxxxxx   web    0.00%   3.5MiB / 1.9GiB     1.2kB/0B    0B/0B
-```
-- `stats`는 실시간 갱신됩니다. 종료는 `Ctrl + C`.
+> docker stats web 실행 화면  
+<img width="1107" height="61" alt="image" src="https://github.com/user-attachments/assets/77426bdb-bac5-475f-91da-e7a3c62017f0" />
 
 
 ## 4. 전체 흐름 한눈에 보기
