@@ -156,7 +156,7 @@ ls -l                    # [변경 후] 권한 확인
 
 ---
 
-### 🔢 참고: 자주 쓰는 권한 숫자
+🔢 참고: 자주 쓰는 권한 숫자
 | 숫자 | 권한 | 의미 |
 |------|------|------|
 | 777 | rwxrwxrwx | 모두 모든 권한 (보안 취약) |
@@ -169,13 +169,26 @@ ls -l                    # [변경 후] 권한 확인
 
 ##  STEP 3. Docker 설치 점검 (요구사항 4)
 
-| 명령어 | 설명 |
-|--------|------|
-| `docker --version` | 설치된 Docker의 버전 확인 |
-| `sudo service docker start` | Docker 서비스(데몬) 시작 |
-| `sudo docker info` | Docker 전체 시스템 정보 조회 |
+🐳 Docker 설치 방법
+                
+                sudo apt update              # 패키지 목록 최신화 (관리자 권한으로, 설치 가능한 패키지 목록을 최신으로 갱신) 
+                sudo apt install docker.io   # Docker 설치
+                
 
-### 💻 실행 결과
+✅ 1. Docker 버전 확인  
+
+                 docker --version
+
+✅ 2. Docker 데몬 동작 확인 (Docker 전체 시스템 정보 조회)  
+
+                 docker info 
+
+✅ 3. Docker 데몬 동작 확인 
+
+                 sudo service docker start  
+        
+
+💻 실행 결과
 
 ```bash
 $ docker --version
@@ -190,16 +203,23 @@ Client:
  Debug Mode: false
 ```
 
-> 📸 실행 결과 캡처
+>   
 > <img width="741" height="287" alt="image" src="https://github.com/user-attachments/assets/2cd84ae9-5107-4d24-b4ab-2f57e6d055e1" />
 
-### 🔍 개념 정리
+→ 데몬이 켜져 있으면 서버 정보가 쭉 나와요.   
+→ 꺼져 있으면 Cannot connect to the Docker daemon... 같은 에러가 나요.   
+
+🔍 개념 정리
 
 - **Docker**: 애플리케이션을 **컨테이너** 단위로 패키징하여 어디서든 동일하게 실행할 수 있게 해주는 플랫폼
 - **`docker --version`**: 클라이언트 버전만 간단히 확인
 - **`service docker start`**: Docker 데몬(백그라운드 서비스)을 실행하는 명령
   - WSL 환경에서는 부팅 시 자동 실행되지 않아 수동으로 시작해야 할 수 있음
 - **`docker info`**: 클라이언트/서버 버전, 플러그인, 컨테이너 수 등 상세 정보 확인
+
+🪟 새로운 용어 정리  
+sudo ( Super User DO ) : 잠깐 관리자(root) 권한을 빌려서 명령을 실행할 때 사용.  
+apt ( Advanced Package Tool ) : Ubuntu / Debian 계열 리눅스에서 쓰는 패키지 관리 도구, 프로그램을 설치·삭제·업데이트할 때 사용합니다.
 
 
 --------------------------------------------------------------------------------------    
