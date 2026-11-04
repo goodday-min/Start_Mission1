@@ -224,30 +224,27 @@ apt ( Advanced Package Tool ) : Ubuntu / Debian 계열 리눅스에서 쓰는 �
 
 --------------------------------------------------------------------------------------    
 
-## STEP 4. Docker 기본 운영 명령 수행 (요구사항 5)
+## STEP 4. Docker 기본 운영 명령 수행 (요구사항 5)   
 
-# Docker 핵심 개념 정리
+🔍 Docker 핵심 개념 정리
 
-## 0. Docker란?
-- 애플리케이션을 **컨테이너**라는 격리된 공간에서 실행하는 가상화 기술입니다.
-- 실행 환경(라이브러리, 설정 등)을 **이미지**로 묶어두기 때문에, "내 PC에서는 되는데..." 문제를 줄여줍니다.
+- Docker   
+> 애플리케이션을 **컨테이너**라는 격리된 공간에서 실행하는 가상화 기술입니다.  
+> 실행 환경(라이브러리, 설정 등)을 **이미지**로 묶어두기 때문에, "내 PC에서는 되는데..." 문제를 줄여줍니다.  
 
+- 이미지(Image)   
+> 컨테이너를 만들기 위한 **설계도 / 템플릿**입니다.  
+> 애플리케이션 코드 + 실행에 필요한 라이브러리·설정이 포함된 **읽기 전용** 파일입니다.  
+> 한 개의 이미지로 **여러 개의 컨테이너**를 만들 수 있습니다.  
+> 예: `nginx` 이미지 → 웹 서버 컨테이너 여러 개 생성 가능  
+> 
+> 비유: 이미지는 '붕어빵 틀', 컨테이너는 '찍어낸 붕어빵'  
+
+- 컨테이너(Container)   
+> 이미지를 실행한 **실제 동작 중인 인스턴스**입니다.   
+> 서로 격리되어 있어 한 컨테이너의 문제가 다른 컨테이너에 영향을 주지 않습니다.   
+> 생성 → 실행 → 중지 → 삭제의 **생명주기(Life Cycle)** 를 가집니다.    
 ---
-
-## 1. 이미지(Image)
-- 컨테이너를 만들기 위한 **설계도 / 템플릿**입니다.
-- 애플리케이션 코드 + 실행에 필요한 라이브러리·설정이 포함된 **읽기 전용** 파일입니다.
-- 한 개의 이미지로 **여러 개의 컨테이너**를 만들 수 있습니다.
-- 예: `nginx` 이미지 → 웹 서버 컨테이너 여러 개 생성 가능
-
-> 비유: 이미지는 '붕어빵 틀', 컨테이너는 '찍어낸 붕어빵'
-
----
-
-## 2. 컨테이너(Container)
-- 이미지를 실행한 **실제 동작 중인 인스턴스**입니다.
-- 서로 격리되어 있어 한 컨테이너의 문제가 다른 컨테이너에 영향을 주지 않습니다.
-- 생성 → 실행 → 중지 → 삭제의 **생명주기(Life Cycle)** 를 가집니다.
 
 | 상태 | 설명 |
 |------|------|
@@ -257,11 +254,11 @@ apt ( Advanced Package Tool ) : Ubuntu / Debian 계열 리눅스에서 쓰는 �
 
 ---
 
-## 3. 모니터링(Monitoring)
-- 컨테이너가 **정상 동작하는지, 자원을 얼마나 쓰는지** 확인하는 운영 활동입니다.
-- 주요 관찰 대상:
-  - **로그(logs)**: 애플리케이션의 출력·에러 메시지 → 문제 원인 파악
-  - **리소스(stats)**: CPU·메모리·네트워크 사용량 → 성능·부하 확인
+- 모니터링(Monitoring)
+> 컨테이너가 **정상 동작하는지, 자원을 얼마나 쓰는지** 확인하는 운영 활동입니다.
+> 주요 관찰 대상:
+> **로그(logs)**: 애플리케이션의 출력·에러 메시지 → 문제 원인 파악
+> **리소스(stats)**: CPU·메모리·네트워크 사용량 → 성능·부하 확인
 
 ---
 
@@ -270,14 +267,14 @@ apt ( Advanced Package Tool ) : Ubuntu / Debian 계열 리눅스에서 쓰는 �
 
 ## 1. 이미지(Image) 관련
 
-### 1) 이미지 다운로드
+✅ 1. 이미지 다운로드
 ```bash
 docker pull nginx:latest
 ```
 - `pull`: 레지스트리(기본 Docker Hub)에서 이미지를 받아옵니다.
 - `nginx:latest`: `이미지명:태그` 형식. 태그 생략 시 `latest`.
 
-### 2) 이미지 목록 확인
+✅ 2. 이미지 목록 확인
 ```bash
 docker images
 ```
@@ -289,11 +286,19 @@ nginx        latest    xxxxxxxxxxxx   2 weeks ago   187MB
 - **IMAGE ID**: 이미지 고유 식별자
 - **SIZE**: 이미지 용량
 
+
+<img width="1447" height="573" alt="image" src="https://github.com/user-attachments/assets/ad06e420-7a1d-4874-bef7-204a0c48b46c" />   
+
+
+*** 처음 docker pull nginx:latest 실행했을 떄 권한 오류 발생 함.
+-> 해결 방법
+
+
 ---
 
 ## 2. 컨테이너(Container) 관련
 
-### 1) 컨테이너 실행
+✅ 1. 컨테이너 실행
 ```bash
 docker run -d --name web -p 8080:80 nginx
 ```
@@ -301,27 +306,39 @@ docker run -d --name web -p 8080:80 nginx
 - `--name web`: 컨테이너 이름 지정
 - `-p 8080:80`: 호스트 8080 → 컨테이너 80 포트 연결
 
-### 2) 실행 중인 컨테이너 목록
+
+- 오류 발생
+- 1. 해결방법 : 포트 충돌 컨테이너 중지후 삭제
+> docker ps -a                                #전체 컨테이너 목록 조회
+> docker stop stupefied_spence                #실행 중이므로 먼저 중지
+> docker rm stupefied_spence                  # 제거
+
+- 2. 해결방법 : 실패로 남은 web 컨테이너 제거
+> docker rm web                               # Created 상태라 stop 없이 바로 제거 가능
+ 
+- 3. 컨테이너 확인
+> docker ps -a
+
+✅ 2. 실행 중인 컨테이너 목록
 ```bash
 docker ps
 ```
 
-### 3) 전체 컨테이너 목록 (중지된 것 포함)
+✅ 3. 전체 컨테이너 목록 (중지된 것 포함)
 ```bash
 docker ps -a
 ```
-출력 예시:
-```
-CONTAINER ID   IMAGE   COMMAND   STATUS         PORTS                  NAMES
-xxxxxxxxxxxx   nginx   "..."     Up 2 minutes   0.0.0.0:8080->80/tcp   web
-```
 
-### 4) 컨테이너 중지
+<img width="1450" height="167" alt="image" src="https://github.com/user-attachments/assets/d486bc89-7366-4ec6-8483-0af9ce2571b2" />  
+
+✅ 4. 컨테이너 중지
 ```bash
 docker stop web
 ```
 
----
+<img width="1448" height="256" alt="image" src="https://github.com/user-attachments/assets/f4d1373d-affe-492f-834d-2232beeeca20" />  
+
+
 
 ## 3. 운영(모니터링) 관련
 
