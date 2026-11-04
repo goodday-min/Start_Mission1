@@ -1,6 +1,31 @@
 
 
 
+## STEP 1. 리눅스 기본 명령어 정리
+
+### 실습 환경
+- 환경: WSL 2 (microsoft-standard-WSL2)
+- 배포판: Ubuntu 26.04.1 LTS (Resolute Raccoon)
+- 셸: /bin/bash
+- 커널: Linux 6.18.54.1
+
+### 명령어 요약
+
+| 번호 | 명령어 | 의미 | 설명 |
+|------|--------|------|------|
+| ① | `pwd` | print working directory | 현재 작업 중인 디렉터리 경로 출력 |
+| ② | `ls` | list | 현재 폴더의 파일·디렉터리 목록 표시 |
+| ③ | `ls -a` | list all | 숨김 파일(`.`으로 시작)까지 모두 표시 |
+| ④ | `cd` | change directory | 디렉터리 이동 (`cd ..` 상위, `cd ~` 홈) |
+| ⑤ | `mkdir` | make directory | 새 폴더 생성 |
+| ⑥ | `touch` | - | 빈 파일 생성 |
+| ⑦ | `cat` | concatenate | 파일 내용을 터미널에 출력 |
+| ⑧ | `cp` | copy | 파일/폴더 복사 (`cp 원본 사본`) |
+| ⑨ | `mv` | move | 이동 또는 이름 변경 (`mv 원본 대상`) |
+| ⑩ | `rm` | remove | 파일 삭제 (`rm -r` 폴더 삭제) |
+
+
+
 
 🔐 STEP 2. 권한 실습 및 증거 기록 (요구사항 3) 
 -권한을 확인/변경하는 명령을 수행하고, 변경 전/후 비교를 기술 문서에 남긴다.
