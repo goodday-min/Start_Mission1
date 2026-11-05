@@ -294,6 +294,18 @@ nginx        latest    xxxxxxxxxxxx   2 weeks ago   187MB
 -> 해결 방법
 
 
+### 트러블슈팅 1: docker pull 시 권한 오류
+
+- **문제**: `docker pull nginx:latest` 실행 시 아래 오류 발생
+  permission denied while trying to connect to the docker API at unix:///var/run/docker.sock
+- **원인 가설**: 현재 사용자가 `docker` 그룹에 속하지 않아 docker.sock 접근이 거부됨
+- **확인**: `groups` 또는 `id` 출력에 `docker`가 없음을 확인
+- **해결**:
+  sudo usermod -aG docker $USER
+  (터미널 재접속 후) `groups`에 docker 표시 확인 → `docker images` 정상 동작
+
+
+
 ---
 
 ## 2. 컨테이너(Container) 관련
@@ -376,6 +388,251 @@ docker stop   →  컨테이너 중지
 ```
 
 --------------------------------------------------------------------------------------    
+## STEP 5. 컨테이너 실행 실습
+
+✅ 1. hello-world 실행 : `hello-world`: Docker가 정상 설치됐는지 확인하는 테스트용 이미지
+
+```bash
+docker run hello-world
+```
+> docker run hello-world 실행 화면 
+<img height="300" alt="image" src="https://github.com/user-attachments/assets/2ed61b8f-c171-463e-8aaf-b557334af4b6" />  
+
+
+💡Docker 동작 과정 : client → daemon → 이미지 pull → 컨테이너 생성 → 출력 전달   
+
+| 단계 | 내용 | 의미 |
+|:---:|------|------|
+| 1 | Docker client가 Docker daemon에 연결 | 입력한 명령을 **클라이언트**가 받아 실제 일꾼인 **데몬**에게 전달 |
+| 2 | daemon이 Docker Hub에서 `hello-world` 이미지를 pull (amd64) | 로컬에 이미지가 없어 **원격 저장소(Docker Hub)**에서 내려받음 |
+| 3 | 이미지로부터 새 컨테이너 생성 | 이미지(설계도) → 컨테이너(실행체)로 만들어 실행 |
+| 4 | 출력을 client로 스트리밍 → 터미널 표시 | 그 결과가 화면에 보이는 메시지 |
+
+
+> 💡핵심 개념  
+> - **이미지**: 실행에 필요한 파일·설정이 담긴 템플릿 (설계도)
+> - **컨테이너**: 이미지를 실제로 실행한 인스턴스 (실행체)
+> - **client → daemon** 구조: 명령 접수(client)와 실제 작업(daemon)이 분리됨
+
+✅ 2. ubuntu 컨테이너 내부 진입  
+
+```bash
+docker run -it ubuntu
+```
+
+- `-i` (interactive): 표준 입력(STDIN)을 유지 → 입력을 받을 수 있음
+- `-t` (tty): 가상 터미널 할당 → 터미널처럼 보이게 함
+- `-it`를 함께 쓰면 컨테이너 안에서 직접 명령을 입력할 수 있음
+
+> docker run -it ubuntu , echo "hollo container", echo ls 실행 화면
+ <img height="250" alt="image" src="https://github.com/user-attachments/assets/48b771d3-c38a-4d78-b3cc-d9f7a480fa68" />
+ 
+> 종료는 `exit` 입력 (컨테이너도 함께 정지됨)  
+---
+
+✅ 3. attach vs exec 비교  
+
+| 구분 | attach | exec |
+|------|--------|------|
+| 동작 | 실행 중인 컨테이너의 **기존 프로세스(PID 1)** 화면에 연결 | 실행 중인 컨테이너에 **새 명령/프로세스**를 투입 |
+| 세션 | 메인 프로세스와 입출력을 공유 | 독립된 새 세션 |
+| 종료 영향 | `exit` 시 컨테이너가 **컨테이너 정지** | `exit` 해도 새 프로세스만 종료, 컨테이너는 **계속 실행** |
+| 주 용도 | 메인 프로세스 로그/화면 보기 | 추가 작업, 디버깅 |
+
+
+✅ 4. docker attach test vs docker exec -it test bash 비교  
+
+| 구분 | `docker attach test` | `docker exec -it test bash` |
+|------|----------------------|------------------------------|
+| 하는 일 | 이미 돌고 있는 **메인 프로세스에 연결** | 컨테이너 안에서 **새 프로세스(bash) 실행** |
+| 대상 | 이미 존재함 (연결만 하면 됨) | 지금 새로 만들어야 함 (뭘 실행할지 알려줘야 함) |
+| 실행 대상 명시 | 불필요 (기본 bash에 연결) | 필요 (`bash` 등 실행할 프로그램 지정) |
+
+🔑 핵심: 둘은 "하는 일"이 달라요  
+> **요약**: attach는 기존 bash에 "연결", exec는 새 bash를 "실행". 
+> 그래서 exec는 `-it`와 `bash`를 명시해야 한다.
+
+
+먼저 백그라운드로 컨테이너 실행
+```bash
+docker run -dit --name test ubuntu
+```
+- `-d`: 백그라운드(detached) 실행
+
+```bash
+docker attach test
+```
+
+```bash
+docker exec -it test bash
+```
+
+> attach, exec 실행 화면
+<img width="998" height="377" alt="image" src="https://github.com/user-attachments/assets/a562bc4e-5202-4d6f-a655-103a21fdbac0" />
+
+
+🪟 정리
+- `attach`는 **원래 돌아가던 프로세스에 붙는 것**
+- `exec`는 **새 명령을 추가로 실행하는 것**
+- 실무에서는 컨테이너 중지를 피하려고 주로 `exec`를 사용함
+
+
+
+
+------------------------------------------------------------
+
+--------------------------------------------------------------------------------------
+
+## STEP 7. 기존 Dockerfile 기반 커스텀 이미지 제작 (요구사항 7)
+
+### 1. 선택한 방식과 베이스
+- **선택 방식**: (A) 웹 서버 베이스 이미지 활용 + 정적 콘텐츠/설정 교체
+- **기존 베이스 이미지**: `nginx:alpine` (경량 alpine 리눅스 기반 NGINX 공식 이미지)
+- **작업 경로**: `~/codyssey/docker-custom` (리눅스 홈. `/mnt/c`는 권한이 777로 고정되어 홈에서 진행)
+
+### 2. 디렉토리 구성
+```
+docker-custom/
+├── Dockerfile
+└── site/
+    └── index.html
+```
+
+### 3. 작업 폴더 생성 및 파일 작성
+```bash
+$ cd ~
+$ mkdir -p ~/codyssey/docker-custom/site     # 작업 폴더 + 하위 폴더 생성
+$ cd ~/codyssey/docker-custom                # 작업 폴더로 이동
+$ pwd                                        # 현재 위치 확인
+/home/user/codyssey/docker-custom
+```
+> 작업 폴더 생성
+<img width="992" height="97" alt="image" src="https://github.com/user-attachments/assets/dd77b31c-48a2-474c-a0b9-77091d64b72d" />
+
+**site/index.html**
+```bash
+$ cat > site/index.html << 'EOF'
+<!DOCTYPE html>
+<html lang="ko">
+<head><meta charset="UTF-8"><title>My Custom Nginx</title></head>
+<body>
+  <h1>Hello from my custom image!</h1>
+  <p>내가 만든 NGINX 커스텀 이미지입니다.</p>
+</body>
+</html>
+EOF
+```
+> 웹 페이지 만들기
+
+| 내용 작성 : cat >  site/index.html << 'EOF' | 내용 확인 : cat site/index.html |
+| --- | --- | 
+| <img width="937" height="232" alt="image" src="https://github.com/user-attachments/assets/078181c9-f2bf-46f3-ba6e-8440fdbabaeb" /> | <img width="797" height="327" alt="image" src="https://github.com/user-attachments/assets/e5df2c4f-a1e6-409a-a54f-0d9a17cf37eb" /> | 
+
+
+**Dockerfile**
+```bash
+$ cat > Dockerfile << 'EOF'
+FROM nginx:alpine
+LABEL org.opencontainers.image.title="my-custom-nginx"
+ENV APP_ENV=dev
+COPY site/ /usr/share/nginx/html/
+EOF
+```
+
+> Dockerfile 만들기  
+<img width="882" height="235" alt="image" src="https://github.com/user-attachments/assets/7929e6e4-e8c4-45f4-abfd-ead8bfc70fdd" />
+
+
+### 4. 커스텀 포인트와 목적
+
+| Dockerfile 줄 | 커스텀 포인트 | 목적 |
+|---|---|---|
+| `FROM nginx:alpine` | 기존 베이스 이미지 사용 | 웹 서버를 처음부터 만들지 않고, 검증된 경량 NGINX 이미지를 기반으로 시작 |
+| `LABEL ...title="my-custom-nginx"` | 이미지 메타데이터 | 이미지의 이름/용도를 표시해 식별·관리를 쉽게 함 |
+| `ENV APP_ENV=dev` | 환경변수 설정 | 실행 모드를 코드가 아닌 설정으로 분리 (설정과 코드의 분리) |
+| `COPY site/ /usr/share/nginx/html/` | 정적 콘텐츠 교체 | NGINX 기본 페이지를 내가 만든 페이지로 교체 (핵심 커스텀) |
+
+### 5. 이미지 빌드
+```bash
+$ docker build -t my-custom-nginx:1.0 .
+```
+- `-t 이름:태그`: 이미지 이름 지정 / 마지막 `.`: 현재 폴더의 Dockerfile 사용
+- `Using cache`: 같은 내용의 단계는 이전 빌드 결과를 재사용
+- 출력 맨 위에 legacy builder DEPRECATED 경고가 표시됨 (buildx 설치 안내). 빌드는 정상 성공.
+
+> docker build 출력 캡처
+
+<img width="1013" height="450" alt="image" src="https://github.com/user-attachments/assets/227b4cca-2f30-4115-9997-342c49a11867" />
+
+
+```bash
+$ docker images
+```
+> docker images 실행 화면  
+<img width="1456" height="191" alt="image" src="https://github.com/user-attachments/assets/befaf287-0ef3-4749-85f6-f720ac378526" />
+
+
+### 6. 컨테이너 실행
+```bash
+$ docker run -d -p 8080:80 --name my-nginx my-custom-nginx:1.0
+$ docker ps
+CONTAINER ID   IMAGE                 STATUS           PORTS                                     NAMES
+c9dd7ff84780   my-custom-nginx:1.0   Up About a minute   0.0.0.0:8080->80/tcp, [::]:8080->80/tcp   my-nginx
+```
+- `-d`: 백그라운드 실행 / `-p 8080:80`: 호스트 8080 → 컨테이너 80 / `--name`: 컨테이너 이름
+
+> docker run, docker ps 실행 화면  
+<img width="1622" height="218" alt="image" src="https://github.com/user-attachments/assets/f76ea94c-a54b-48c4-9c02-a96221988576" />
+
+
+### 7. 검증 (접속 · 환경변수 · 로그)
+
+**① curl 응답**
+```bash
+$ curl http://localhost:8080
+```
+> curl 실행 화면
+<img width="887" height="217" alt="image" src="https://github.com/user-attachments/assets/49a0ca0b-602e-44de-86a8-553f677b2fba" />
+
+**② 브라우저 접속** (주소창 `localhost:8080` + 응답 화면)
+<img width="673" height="213" alt="image" src="https://github.com/user-attachments/assets/bc059b5b-9b2c-417a-8c22-982384feecf8" />
+
+
+**③ 환경변수 적용 확인**
+```bash
+$ docker exec my-nginx env | grep APP_ENV
+APP_ENV=dev
+```
+> 환경변수 실행 화면 
+<img width="1058" height="51" alt="image" src="https://github.com/user-attachments/assets/fa781323-459b-4de0-8c78-dbab0bff779b" />
+
+**④ 접속 로그 확인**
+```bash
+$ docker logs --tail 5 my-nginx
+```
+
+> 접속로그 실행 화면 
+<img width="1621" height="191" alt="image" src="https://github.com/user-attachments/assets/be21dfca-699e-4c97-94d0-4549a7832636" />
+
+> curl과 Chrome 요청이 모두 `200`으로 컨테이너에 도달했음을 확인 (로그 시각은 UTC)
+
+### 8. 검증 요약
+
+| 검증 항목 | 명령 | 결과 |
+|---|---|---|
+| 이미지 빌드 성공 | `docker build`, `docker images` | `my-custom-nginx:1.0` 생성 |
+| 컨테이너 실행 성공 | `docker ps` | `my-nginx` Up, `8080->80` |
+| 커스텀 콘텐츠 적용 | `curl`, 브라우저 | 내가 만든 HTML 응답 |
+| 환경변수 적용 | `docker exec ... env` | `APP_ENV=dev` |
+| 요청 도달 | `docker logs` | `GET / ... 200` |
+
+### 9. 정리 (이 단계에서 이해한 점)
+- **이미지**는 설계도(읽기 전용), **컨테이너**는 그것을 실행한 인스턴스이며 한 이미지로 여러 컨테이너를 만들 수 있다.
+- 컨테이너는 격리되어 있어 `-p` 포트 매핑을 해야 호스트에서 접근할 수 있다.
+- 기존 이미지 위에 `COPY`/`ENV`/`LABEL`을 얹는 것이 "커스텀 이미지" 제작이다.
+
+
+
 
 
 
