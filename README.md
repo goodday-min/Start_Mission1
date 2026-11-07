@@ -35,7 +35,9 @@
 체크 표시는 지금까지 근거가 있는 항목만 했어요. STEP 7은 8081 브라우저 캡처가 아직 없어서 캡처 후에 확정할 예정.
 
 --------------------------------------------------------------------------------------    
+
 ## 1. 리눅스 CLI 및 파일(절대/상대)  
+
 --------------------------------------------------------------------------------------
 ✅ 리눅스 터미널에서 환경 정보 확인
   
@@ -88,10 +90,12 @@ WSL이란? 윈도우 안에서 리눅스를 실행할 수 있게 해주는 기�
 커널(Kernel)이란?  운영체제의 핵심(중심부) - uname -a에서 봤던 Linux 6.18...이 바로 커널 버전  
 
 --------------------------------------------------------------------------------------    
-##  STEP 2. 파일(절대/상대) 및 권한 설정
 
+## 2. 파일(절대/상대) 및 권한 설정
 
-### 절대 경로와 상대 경로
+--------------------------------------------------------------------------------------  
+
+### 1. 절대 경로와 상대 경로
 
 | 구분 | 설명 | 이 실습의 예시 |
 |---|---|---|
@@ -103,7 +107,7 @@ WSL이란? 윈도우 안에서 리눅스를 실행할 수 있게 해주는 기�
 - 바인드 마운트(STEP 9)에서 `$(pwd)/site`로 절대 경로를 만들어 쓴 이유다.
 
 
-#### 권한(permission) 설정
+#### 2. 권한(permission) 설정
 
 권한 표기 형식 예시: `-rwxr-xr--`
 
@@ -125,13 +129,9 @@ WSL이란? 윈도우 안에서 리눅스를 실행할 수 있게 해주는 기�
 - 숫자 합산으로 표현: `rwx`=7, `r-x`=5, `r--`=4
 - **chmod** = **ch**ange **mod**e (권한 변경 명령)
 
----
-
 ⚠️ 실습 환경 주의사항
 - `/mnt/c/...` (윈도우 디스크 영역)는 권한이 **777로 고정**되어 변경이 반영되지 않음.
 - 따라서 **리눅스 홈 디렉토리(`~`)** 에서 실습을 진행함.
-
----
 
 ```bash
 cd ~                     # 리눅스 홈 디렉토리로 이동
@@ -145,38 +145,37 @@ chmod 700 sample_dir     # 디렉토리 권한 변경 (rwx------)
 ls -l                    # [변경 후] 권한 확인
 ```
 
----
-
 📊 권한 변경 전/후 비교
 | 대상 | 변경 전 | 변경 후 | 사용 명령 | --- | 
 |------|---------|---------|-----------| --- | 
 | sample.txt (파일) | rw-r--r-- (644) | rwxr--r-- (744) | `chmod 744 sample.txt` | <img width="687" height="136" alt="image" src="https://github.com/user-attachments/assets/b587d7dc-7eab-421f-a63a-58d599364685" /> | 
 | sample_dir (디렉토리) | rwxr-xr-x (755) | rwx------ (700) | `chmod 700 sample_dir` | <img width="687" height="142" alt="image" src="https://github.com/user-attachments/assets/9566e7f4-4bb2-410f-be89-f90545d1d2fc" /> | 
 
----
 
 ✅ 정리
 - `chmod` 명령으로 파일과 디렉토리의 권한을 변경하고,
   `ls -l` 출력을 통해 변경 전/후 차이를 확인함.
 - 윈도우 영역(`/mnt/c`)이 아닌 리눅스 홈(`~`)에서 권한이 정상 적용됨을 확인함.
 
----
 
 --------------------------------------------------------------------------------------    
 
 ## 3. Docker 설치 및 운영 
 
+--------------------------------------------------------------------------------------  
+
+
 - Docker 설치 및 데몬 실행
  
 ```bash               
-        sudo apt update              # 패키지 목록 최신화 (관리자 권한으로, 설치 가능한 패키지 목록을 최신으로 갱신) 
-        sudo apt install docker.io   # Docker 설치
+    sudo apt update              # 패키지 목록 최신화 (관리자 권한으로, 설치 가능한 패키지 목록을 최신으로 갱신) 
+    sudo apt install docker.io   # Docker 설치
 
-        docker --version             #Docker 버전 확인
-        docker info                  #Docker 데몬 동작 확인
-        sudo service docker start    #Docker 데몬 실행
+    docker --version             #Docker 버전 확인
+    docker info                  #Docker 데몬 동작 확인
+    sudo service docker start    #Docker 데몬 실행
 ```
-> <img width="741" height="287" alt="image" src="https://github.com/user-attachments/assets/2cd84ae9-5107-4d24-b4ab-2f57e6d055e1" />
+> <img width="741" height="200" alt="image" src="https://github.com/user-attachments/assets/2cd84ae9-5107-4d24-b4ab-2f57e6d055e1" />
 
 - docker --version : 클라이언트 버전만 간단히 확인
 - service docker start : Docker 데몬(백그라운드 서비스)을 실행하는 명령
@@ -188,7 +187,9 @@ sudo ( Super User DO ) : 잠깐 관리자(root) 권한을 빌려서 명령을 �
 apt ( Advanced Package Tool ) : Ubuntu / Debian 계열 리눅스에서 쓰는 패키지 관리 도구, 프로그램을 설치·삭제·업데이트할 때 사용합니다.
 
 
-🔍 Docker 핵심 개념 정리
+### 🔍 Docker 핵심 개념 정리 ###
+
+---
 
 - **Docker**     
 > 애플리케이션을 **컨테이너** 단위로 패키징하여 어디서든 동일하게 실행할 수 있게 해주는 플랫폼    
@@ -206,15 +207,6 @@ apt ( Advanced Package Tool ) : Ubuntu / Debian 계열 리눅스에서 쓰는 �
 > 이미지를 실행한 **실제 동작 중인 인스턴스**입니다.   
 > 서로 격리되어 있어 한 컨테이너의 문제가 다른 컨테이너에 영향을 주지 않습니다.   
 > 생성 → 실행 → 중지 → 삭제의 **생명주기(Life Cycle)** 를 가집니다.    
----
-
-| 상태 | 설명 |
-|------|------|
-| Created | 생성됐지만 아직 실행 전 |
-| Up (Running) | 실행 중 |
-| Exited (Stopped) | 중지됨 |
-
----
 
 - **모니터링(Monitoring)**
 > 컨테이너가 **정상 동작하는지, 자원을 얼마나 쓰는지** 확인하는 운영 활동입니다.
@@ -223,7 +215,7 @@ apt ( Advanced Package Tool ) : Ubuntu / Debian 계열 리눅스에서 쓰는 �
 
 ---
 
-### 1. 이미지(Image) 
+#### 1. 이미지(Image) 
 
 ✅ 1. 이미지 다운로드
 ```bash
@@ -252,7 +244,7 @@ nginx        latest    xxxxxxxxxxxx   2 weeks ago   187MB
 -> 해결 방법
 
 
-### 트러블슈팅 1: docker pull 시 권한 오류
+#### 🔍 트러블슈팅 1: docker pull 시 권한 오류
 
 - **문제**: `docker pull nginx:latest` 실행 시 아래 오류 발생
   permission denied while trying to connect to the docker API at unix:///var/run/docker.sock
@@ -262,9 +254,9 @@ nginx        latest    xxxxxxxxxxxx   2 weeks ago   187MB
   sudo usermod -aG docker $USER
   (터미널 재접속 후) `groups`에 docker 표시 확인 → `docker images` 정상 동작
 
----
 
-### 2. 컨테이너(Container) 관련
+
+#### 2. 컨테이너(Container)  
 
 ✅ 1. 컨테이너 실행, 중지, 목록, 삭제
 ```bash
@@ -279,7 +271,6 @@ nginx        latest    xxxxxxxxxxxx   2 weeks ago   187MB
     docker stop stupefied_spence                #실행 중이므로 먼저 중지
     docker rm stupefied_spence                  # 제거
     docker stop web
-
 ```
 
 >  docker 실행, 중지, 목록, 삭제 실행 화면  
@@ -291,7 +282,7 @@ nginx        latest    xxxxxxxxxxxx   2 weeks ago   187MB
 
 
 
-### 3. 운영(모니터링) 관련
+#### 3. 운영(모니터링)
 
 ✅ 1. 로그 확인
 ```bash
@@ -327,7 +318,9 @@ docker stop   →  컨테이너 중지
 ```
 
 --------------------------------------------------------------------------------------    
-## 4. 컨테이너 실행 실습
+
+## 4. 컨테이너 실행
+
 --------------------------------------------------------------------------------------   
 
 ✅ 1. hello-world 실행 : `hello-world`: Docker가 정상 설치됐는지 확인하는 테스트용 이미지
@@ -422,12 +415,12 @@ docker exec -it test bash
 
 --------------------------------------------------------------------------------------    
 
-### 1. 선택한 방식과 베이스
+#### 1. 선택한 방식과 베이스
 - **선택 방식**: (A) 웹 서버 베이스 이미지 활용 + 정적 콘텐츠/설정 교체
 - **기존 베이스 이미지**: `nginx:alpine` (경량 alpine 리눅스 기반 NGINX 공식 이미지)
 - **작업 경로**: `~/codyssey/docker-custom` (리눅스 홈. `/mnt/c`는 권한이 777로 고정되어 홈에서 진행)
 
-### 2. 디렉토리 구성
+#### 2. 디렉토리 구성
 ```
 docker-custom/
 ├── Dockerfile
@@ -435,7 +428,7 @@ docker-custom/
     └── index.html
 ```
 
-### 3. 작업 폴더 생성 및 파일 작성
+#### 3. 작업 폴더 생성 및 파일 작성
 ```bash
 $ cd ~
 $ mkdir -p ~/codyssey/docker-custom/site     # 작업 폴더 + 하위 폴더 생성
@@ -480,7 +473,7 @@ EOF
 <img width="882" height="235" alt="image" src="https://github.com/user-attachments/assets/7929e6e4-e8c4-45f4-abfd-ead8bfc70fdd" />
 
 
-### 4. 커스텀 포인트와 목적
+#### 4. 커스텀 포인트와 목적
 
 | Dockerfile 줄 | 커스텀 포인트 | 목적 |
 |---|---|---|
@@ -489,7 +482,7 @@ EOF
 | `ENV APP_ENV=dev` | 환경변수 설정 | 실행 모드를 코드가 아닌 설정으로 분리 (설정과 코드의 분리) |
 | `COPY site/ /usr/share/nginx/html/` | 정적 콘텐츠 교체 | NGINX 기본 페이지를 내가 만든 페이지로 교체 (핵심 커스텀) |
 
-### 5. 이미지 빌드
+#### 5. 이미지 빌드
 ```bash
 $ docker build -t my-custom-nginx:1.0 .
 ```
@@ -509,7 +502,7 @@ $ docker images
 <img width="1456" height="191" alt="image" src="https://github.com/user-attachments/assets/befaf287-0ef3-4749-85f6-f720ac378526" />
 
 
-### 6. 컨테이너 실행
+#### 6. 컨테이너 실행
 ```bash
 $ docker run -d -p 8080:80 --name my-nginx my-custom-nginx:1.0
 $ docker ps
@@ -522,7 +515,7 @@ c9dd7ff84780   my-custom-nginx:1.0   Up About a minute   0.0.0.0:8080->80/tcp, [
 <img width="1622" height="218" alt="image" src="https://github.com/user-attachments/assets/f76ea94c-a54b-48c4-9c02-a96221988576" />
 
 
-### 7. 검증 (접속 · 환경변수 · 로그)
+#### 7. 검증 (접속 · 환경변수 · 로그)
 
 **① curl 응답**
 ```bash
@@ -553,7 +546,7 @@ $ docker logs --tail 5 my-nginx
 
 > curl과 Chrome 요청이 모두 `200`으로 컨테이너에 도달했음을 확인 (로그 시각은 UTC)
 
-### 8. 검증 요약
+#### 8. 검증 요약
 
 | 검증 항목 | 명령 | 결과 |
 |---|---|---|
@@ -584,7 +577,7 @@ $ docker logs --tail 5 my-nginx
 
 --------------------------------------------------------------------------------------
 
-## STEP 7. 포트 매핑 및 접속 증거 
+## 6. 포트 매핑 및 접속
 
 --------------------------------------------------------------------------------------
 
@@ -684,7 +677,7 @@ $ docker logs --tail 5 my-nginx-8081
 
 
 -------------------------------------------------------------------------------------- 
-## STEP 8. Docker 볼륨 영속성 검증 
+## 7. Docker 볼륨 영속성 검증 
 -------------------------------------------------------------------------------------- 
 
 ### 1. 목표
@@ -769,7 +762,7 @@ $ docker exec vol-test2 bash -c "cat /data/hello.txt"
 
 -------------------------------------------------------------------------------------- 
 
-## STEP 9. 바인드 마운트 반영 검증
+## 8. 바인드 마운트 반영 검증
 
 --------------------------------------------------------------------------------------
 
@@ -861,7 +854,7 @@ $ curl http://localhost:8082
 
 -------------------------------------------------------------------------------------- 
 
-## STEP 10. Git 설정 및 GitHub 연동
+## 9. Git 설정 및 GitHub 연동
 
 --------------------------------------------------------------------------------------
 
