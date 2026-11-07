@@ -1,16 +1,43 @@
+# 개발 워크스테이션 구축 (올인원 1기 입학 연수)
+
+## 프로젝트 개요
+- **미션**: 내 컴퓨터에 개발자용 '작업실' 꾸미기
+- **목표**: 리눅스 CLI(터미널), Docker(컨테이너), Git/GitHub(버전 관리·협업)를 직접 세팅하고, 실행 결과(로그·접속·데이터 유지)로 동작을 검증한다.
+- **흐름**: 터미널로 작업 디렉토리·권한 정리 → Docker 설치·점검 → Dockerfile로 웹 서버 이미지 제작 → 포트 매핑 접속 → 바인드 마운트/볼륨으로 변경 반영·데이터 영속성 검증 → Git/GitHub 연동
+
+
+## 실행 환경
+
+| 항목 | 내용 |
+|---|---|
+| 호스트 OS | Windows (세부 버전: 집에서 확인) |
+| Linux | WSL 2, Ubuntu 26.04.1 LTS |
+| 셸 | /bin/bash |
+| 커널 | Linux 6.18.54.1 |
+| 터미널 | (집에서 확인: 사용 중인 터미널 앱 이름) |
+| Docker | 29.1.3 (`docker --version` 기준) |
+| Git | (집에서 `git --version`으로 확인) |
+| 작업 경로 | 리눅스 홈 `~/codyssey/docker-custom` |
+
+## 수행 체크리스트
+- [x] 터미널 기본 조작 (명령어 정리 / 실행 로그는 보완 예정)
+- [x] 권한 변경 실습 (STEP 2)
+- [x] Docker 설치/점검 (STEP 3)
+- [x] Docker 이미지/컨테이너/로그/리소스 확인 (STEP 4)
+- [x] hello-world, ubuntu 컨테이너 실행 (STEP 5)
+- [x] Dockerfile 빌드/실행 (STEP 6)
+- [x] 포트 매핑 접속 2회 (STEP 7)
+- [ ] 볼륨 영속성 (STEP 8, 실습 후 체크)
+- [ ] 바인드 마운트 반영 (STEP 9, 실습 후 체크)
+- [ ] Git 설정 + VSCode GitHub 연동 (집에서 진행)
+
+
+체크 표시는 지금까지 근거가 있는 항목만 했어요. STEP 7은 8081 브라우저 캡처가 아직 없어서 캡처 후에 확정할 예정.
 
 --------------------------------------------------------------------------------------    
 
-## STEP 1. 리눅스 기본 명령어 정리  
+## STEP 1. 리눅스 기본 명령어 및 절대경로 v 상대경로
 
-
-
-### 실습 환경 
-- 환경: WSL 2 (microsoft-standard-WSL2) - WSL(Windows Subsystem for Linux)
-- 배포판: Ubuntu 26.04.1 LTS (Resolute Raccoon)
-- 셸(SHELL): /bin/bash
-- 커널(Cornel): Linux 6.18.54.1
-- 작업 경로: /mnt/c/Users/user/codyssey/allinone/start_mission1
 
 ✅ 1단계: 환경 확인 명령어 (windows : PowerShell 에서 확인)
 
@@ -70,6 +97,17 @@ WSL이란? 윈도우 안에서 리눅스를 실행할 수 있게 해주는 기�
 셸(Shell)이란? 사용자의 명령을 해석해서 운영체제에 전달하는 프로그램    
 커널(Kernel)이란?  운영체제의 핵심(중심부) - uname -a에서 봤던 Linux 6.18...이 바로 커널 버전  
 
+
+### 절대 경로와 상대 경로
+
+| 구분 | 설명 | 이 실습의 예시 |
+|---|---|---|
+| 절대 경로 | 루트(`/`)부터 시작하는 전체 경로. 어디에서 실행해도 같은 위치 | `/home/user/codyssey/docker-custom` |
+| 상대 경로 | 현재 위치를 기준으로 한 경로 | 현재 위치가 `~/codyssey/docker-custom`일 때 `site/index.html` |
+| `~` | 홈 디렉토리(`/home/user`)의 단축 표기 | `cd ~` → `pwd`: `/home/user` |
+
+- **언제 무엇을 쓰나**: 위치가 바뀌어도 항상 같은 곳을 가리켜야 하면 절대 경로(예: 스크립트, 바인드 마운트의 `-v` 호스트 경로), 같은 폴더 안에서 가깝게 작업할 때는 상대 경로가 간단하다.
+- 바인드 마운트(STEP 9)에서 `$(pwd)/site`로 절대 경로를 만들어 쓴 이유다.
 
 
 --------------------------------------------------------------------------------------    
@@ -304,7 +342,31 @@ nginx        latest    xxxxxxxxxxxx   2 weeks ago   187MB
   sudo usermod -aG docker $USER
   (터미널 재접속 후) `groups`에 docker 표시 확인 → `docker images` 정상 동작
 
+### 트러블슈팅 2: git pull 시 추적 브랜치(upstream) 정보 없음
 
+- **문제**: `git pull` 실행 시 원격 저장소에서 객체는 받아왔지만, 병합 단계에서 아래 메시지가 나오며 중단됨
+  ```
+  From https://github.com/goodday-min/Start_Mission1
+     a502009..dce431e  main       -> origin/main
+  There is no tracking information for the current branch.
+  Please specify which branch you want to merge with.
+  ```
+- **원인 가설**: 로컬 브랜치 이름은 `master`, 원격 브랜치 이름은 `main`으로 서로 달라서, 로컬 `master`에 연결된 원격 브랜치(upstream)가 설정되어 있지 않음. 그래서 `git pull`이 어느 브랜치와 병합할지 알 수 없음
+- **확인**:
+  - `git branch -a` → 로컬은 `* master`만 있고, 원격은 `remotes/origin/main`(`origin/HEAD -> origin/main`)임을 확인
+  - `git log --oneline` → 로컬 `a502009 Initial commit`이 원격 이전 지점(`a502009..dce431e`)과 같은 커밋임을 확인 (같은 저장소에서 시작했고 원격만 앞서 나간 상태, 서로 다른 히스토리가 아님)
+  - `git status` → 추적되지 않은 파일(Untracked)만 있고 변경된 파일은 없음을 확인 (병합해도 로컬 작업 손실 없음)
+  - `git config core.quotepath false` → 한글 파일명이 `\353\252...` 형태로 깨져 보이던 것을 한글로 표시
+- **해결**:
+  ```bash
+  git branch -m master main                      # 로컬 브랜치 이름을 main으로 변경
+  git branch --set-upstream-to=origin/main main  # main과 origin/main 연결
+  git pull                                       # 이후부터는 git pull만으로 동작
+  ```
+  `git status`에서 `Your branch is up to date with 'origin/main'`가 나오는지 확인
+- **대안**: 이름을 바꾸지 않고 한 번만 브랜치를 지정해서 실행 → `git pull origin main` (연결은 설정되지 않아 다음에도 같은 메시지가 나옴)
+
+> (해결 후 `git pull`, `git status` 실행 화면 캡처를 여기에 추가)
 
 ---
 
@@ -481,7 +543,9 @@ docker exec -it test bash
 
 
 --------------------------------------------------------------------------------------   
+
 ## STEP 6. 기존 Dockerfile 기반 커스텀 이미지 제작 
+
 --------------------------------------------------------------------------------------    
 
 ### 1. 선택한 방식과 베이스
@@ -632,10 +696,287 @@ $ docker logs --tail 5 my-nginx
 
 
 
--------------------------------------------------------------------------------------- 
+
+
+
+
+
+
+
+
+
+
+
+
+--------------------------------------------------------------------------------------
+
 ## STEP 7. 포트 매핑 및 접속 증거 
+
+--------------------------------------------------------------------------------------
+
+### 1. 목표
+- 7단계에서 만든 **같은 이미지**(`my-custom-nginx:1.0`)로 컨테이너를 **2개** 실행하고, 호스트 포트를 서로 다르게(8080, 8081) 연결해 각각 접속되는지 확인한다.
+
+### 2. 포트 매핑이 필요한 이유
+- 컨테이너는 격리된 네트워크 안에서 실행되므로, 호스트(내 PC)에서 컨테이너 내부 포트에 바로 접근할 수 없다.
+- `-p <호스트포트>:<컨테이너포트>`로 호스트 포트와 컨테이너 포트를 연결해야 `localhost:<호스트포트>`로 접속할 수 있다.
+- 컨테이너 내부 포트(NGINX의 80)는 컨테이너마다 독립적이라 겹쳐도 충돌하지 않고, **호스트 쪽 포트만 겹치지 않으면** 같은 이미지로 여러 컨테이너를 동시에 실행할 수 있다.
+
+### 3. 컨테이너 2개 실행
+
+| 컨테이너 | 이미지 | 포트 매핑 | 실행 단계 |
+|---|---|---|---|
+| `my-nginx` | `my-custom-nginx:1.0` | `8080:80` | STEP 7 |
+| `my-nginx-8081` | `my-custom-nginx:1.0` | `8081:80` | STEP 8 |
+
+```bash
+$ docker run -d --name my-nginx-8081 -p 8081:80 my-custom-nginx:1.0
+fdf2e3b4e3d846c350183c527daee2bb8a982f87be811baaf3ed6aa60166a0b1
+$ docker ps
+CONTAINER ID   IMAGE                 COMMAND                  CREATED          STATUS          PORTS                                         NAMES
+fdf2e3b4e3d8   my-custom-nginx:1.0   "/docker-entrypoint.…"   36 seconds ago   Up 35 seconds   0.0.0.0:8081->80/tcp, [::]:8081->80/tcp       my-nginx-8081
+c9dd7ff84780   my-custom-nginx:1.0   "/docker-entrypoint.…"   13 hours ago     Up 13 hours     0.0.0.0:8080->80/tcp, [::]:8080->80/tcp       my-nginx
+0c29a0946bfa   ubuntu                "/bin/bash"              14 hours ago     Up 14 hours                                                   test
+```
+- `-d`: 백그라운드 실행 / `--name`: 컨테이너 이름 / `-p 8081:80`: 호스트 8081 → 컨테이너 80
+- 두 컨테이너 모두 IMAGE가 `my-custom-nginx:1.0`이고 `Up` 상태 (같은 이미지로 컨테이너 여러 개 실행 가능)
+- 옵션 순서(`-p`, `--name`)는 이미지 이름 앞에만 있으면 바꿔도 동일하게 동작함을 확인 (STEP 7은 `-p` 먼저, STEP 8은 `--name` 먼저)
+
+📷 (docker run, docker ps 캡처)
+
+### 4. 접속 증거
+
+**① 8080 접속 (STEP 7에서 확인)**
+- curl, 브라우저(주소창 `localhost:8080`), 접속 로그는 STEP 7의 "7. 검증" 참고
+
+**② 8081 curl 응답**
+```bash
+$ curl http://localhost:8081
+<!DOCTYPE html>
+<html lang="ko">
+<head><meta charset="UTF-8"><title>My Custom Nginx</title></head>
+<body>
+  <h1>Hello from my custom image!</h1>
+  <p>내가 만든 NGINX 커스텀 이미지입니다.</p>
+</body>
+</html>
+```
+📷 (curl 캡처)
+
+**③ 8081 브라우저 접속** (주소창 `localhost:8081` + 응답 화면)
+📷 (브라우저 캡처)
+
+**④ 8081 접속 로그**
+```bash
+$ docker logs --tail 5 my-nginx-8081
+2026/11/05 16:02:03 [notice] 1#1: start worker process 41
+172.17.0.1 - - [05/Nov/2026:16:03:05 +0000] "GET / HTTP/1.1" 200 220 "-" "curl/8.18.0" "-"
+172.17.0.1 - - [05/Nov/2026:16:03:59 +0000] "GET / HTTP/1.1" 200 220 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) ... Chrome/156.0.0.0 Safari/537.36" "-"
+172.17.0.1 - - [05/Nov/2026:16:03:59 +0000] "GET /favicon.ico HTTP/1.1" 404 555 "http://localhost:8081/" "Mozilla/5.0 ... Chrome/156.0.0.0 Safari/537.36" "-"
+2026/11/05 16:03:59 [error] 31#31: *2 open() "/usr/share/nginx/html/favicon.ico" failed (2: No such file or directory), client: 172.17.0.1, server: localhost, request: "GET /favicon.ico HTTP/1.1", host: "localhost:8081", referrer: "http://localhost:8081/"
+```
+- curl과 Chrome의 `GET /` 요청이 모두 `200`으로 8081 컨테이너에 도달함 (로그 시각은 UTC)
+- `favicon.ico 404`는 브라우저가 탭 아이콘을 자동으로 요청했으나 `site/`에 해당 파일이 없어서 발생한 것으로, 페이지 응답(`200`)에는 영향이 없다.
+
+📷 (docker logs 캡처)
+
+### 5. 검증 요약
+
+| 검증 항목 | 명령 | 결과 |
+|---|---|---|
+| 같은 이미지로 컨테이너 2개 실행 | `docker ps` | `my-nginx`(8080), `my-nginx-8081`(8081) 모두 Up |
+| 호스트 포트별 매핑 | `docker ps`의 PORTS | `8080->80`, `8081->80` |
+| 8081 접속 | `curl`, 브라우저 | 커스텀 HTML 응답 |
+| 요청 도달 | `docker logs` | `GET / ... 200` |
+
+### 6. 정리 (이 단계에서 이해한 점)
+- 포트 매핑 `-p 호스트:컨테이너`는 격리된 컨테이너를 호스트에서 접근 가능하게 연결하는 설정이다.
+- 하나의 이미지로 컨테이너를 여러 개 만들 수 있고, 호스트 포트만 다르게 하면 동시에 실행된다.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-------------------------------------------------------------------------------------- 
+## STEP 8. Docker 볼륨 영속성 검증 
 -------------------------------------------------------------------------------------- 
 
+### 1. 목표
+- Docker 볼륨을 생성하고 컨테이너에 연결한다.
+- 컨테이너를 삭제한 뒤에도 볼륨의 데이터가 유지되는지 삭제 전/후로 확인한다.
+
+### 2. 개념
+- **볼륨(Volume)**: Docker가 관리하는 저장 공간. 컨테이너와 수명이 분리되어 있어, 컨테이너를 삭제해도 볼륨은 남는다.
+- 컨테이너 안에만 저장한 데이터는 컨테이너를 삭제하면 함께 사라진다.
+- `-v 볼륨이름:컨테이너경로` 형식으로 연결한다. (왼쪽이 경로가 아니라 **볼륨 이름**이면 볼륨, 호스트 절대 경로이면 바인드 마운트)
+
+### 3. 볼륨 영속성 검증 확인 
+- 사용할 볼륨 이름(`mydata`)과 컨테이너 이름(`vol-test`, `vol-test2`)이 기존 것과 겹치지 않는지 확인
+
+
+#### 1. 볼륨 생성
+
+```bash
+$ docker volume ls
+$ docker ps -a
+$ docker volume create mydata       #볼륨 생성
+$ docker volume ls
+```
+📷 (볼륨 생성/목록 캡처)
+
+#### 2. 볼륨 연결 + 데이터 저장
+```bash
+$ docker run -d --name vol-test -v mydata:/data ubuntu sleep infinity
+$ docker exec vol-test bash -c "echo hi > /data/hello.txt && cat /data/hello.txt"
+```
+- `-v mydata:/data`: `mydata` 볼륨을 컨테이너의 `/data`에 연결
+- `sleep infinity`: ubuntu 컨테이너가 바로 종료되지 않도록 대기
+- `docker exec`: 실행 중인 컨테이너 안에서 명령 실행 (`/data/hello.txt`에 `hi` 저장 후 출력)
+
+📷 (docker run, docker exec 캡처)
+
+#### 3. 컨테이너 삭제 (삭제 전/후 비교)
+```bash
+$ docker rm -f vol-test
+$ docker ps -a
+$ docker volume ls
+```
+- 컨테이너(`vol-test`)는 삭제되었지만 볼륨(`mydata`)은 그대로 남아 있음
+
+📷 (삭제 후 docker ps -a, docker volume ls 캡처)
+
+#### 4. 새 컨테이너에 같은 볼륨 연결 후 데이터 확인
+```bash
+$ docker run -d --name vol-test2 -v mydata:/data ubuntu sleep infinity
+$ docker exec vol-test2 bash -c "cat /data/hello.txt"
+```
+- 삭제된 컨테이너에서 저장한 `hello.txt`가 새 컨테이너에서도 읽힘 → **데이터 영속성 확인**
+
+📷 (vol-test2 실행 및 cat 결과 캡처)
+
+#### 5. 삭제 전/후 비교
+
+| 시점 | 컨테이너 | 볼륨 `mydata` | `/data/hello.txt` |
+|---|---|---|---|
+| 삭제 전 | `vol-test` 실행 중 | 존재 | `hi` 저장 |
+| 삭제 후 | `vol-test` 없음 | **존재** | (볼륨에 보존) |
+| 재연결 후 | `vol-test2` 실행 중 | 존재 | **`hi` 확인** |
+
+### 4. 검증 요약
+
+| 검증 항목 | 명령 | 결과 |
+|---|---|---|
+| 볼륨 생성 | `docker volume create`, `docker volume ls` | `mydata` 생성 |
+| 볼륨 연결 및 쓰기 | `docker run -v`, `docker exec` | `/data/hello.txt`에 `hi` 저장 |
+| 컨테이너 삭제 후 볼륨 유지 | `docker rm -f`, `docker volume ls` | 컨테이너만 삭제, 볼륨 유지 |
+| 데이터 영속성 | `docker exec ... cat` | 새 컨테이너에서 `hi` 확인 |
+
+### 5. 정리 (이 단계에서 이해한 점)
+- 컨테이너의 수명과 데이터의 수명은 분리할 수 있고, 그 수단이 볼륨이다.
+- 컨테이너는 언제든 삭제·재생성할 수 있는 "교체 가능한 실행체"이고, 보존할 데이터는 볼륨에 둔다.
+
+
+
+
+
+
+
+-------------------------------------------------------------------------------------- 
+
+## STEP 9. 바인드 마운트 반영 검증
+
+--------------------------------------------------------------------------------------
+
+### 1. 목표
+- 호스트(내 PC)의 폴더를 컨테이너에 바인드 마운트로 연결한다.
+- 호스트에서 파일을 수정하면, 컨테이너를 다시 만들거나 이미지를 다시 빌드하지 않아도 응답에 바로 반영되는지 변경 전/후로 확인한다.
+
+### 2. 개념
+- **바인드 마운트(Bind Mount)**: 호스트의 특정 경로를 컨테이너 안의 경로에 그대로 연결하는 방식. 같은 파일을 호스트와 컨테이너가 함께 본다.
+- `-v 호스트절대경로:컨테이너경로` 형식으로 연결한다.
+- STEP 7의 `COPY`는 **빌드할 때 한 번 복사**하는 방식이라 내용을 바꾸려면 이미지를 다시 빌드해야 하지만, 바인드 마운트는 **호스트 파일 변경이 즉시 반영**된다.
+
+| 구분 | `COPY` (STEP 7) | 바인드 마운트 (STEP 10) |
+|---|---|---|
+| 파일 위치 | 이미지 안에 복사됨 | 호스트 폴더를 연결 |
+| 호스트에서 수정 시 | 반영 안 됨 (재빌드 필요) | 즉시 반영 |
+
+### 3. 실습 전 준비
+```bash
+$ cd ~/codyssey/docker-custom
+$ pwd
+$ docker ps
+(실제 출력으로 교체)
+```
+- 사용 중인 호스트 포트(8080, 8081)와 겹치지 않도록 이번에는 **8082**를 사용
+
+#### 1. 바인드 마운트로 컨테이너 실행
+```bash
+$ docker run -d --name bind-test -p 8082:80 -v "$(pwd)/site":/usr/share/nginx/html my-custom-nginx:1.0
+$ docker ps
+(실제 출력으로 교체: bind-test, 8082->80)
+```
+- `-v "$(pwd)/site":/usr/share/nginx/html`: 호스트의 `site` 폴더를 컨테이너의 NGINX 웹 루트에 연결
+- `$(pwd)`: 현재 위치(절대 경로)로 치환되며, 바인드 마운트의 호스트 경로는 절대 경로여야 함
+- 이미지 안에 `COPY`로 넣은 파일이 있어도, 마운트된 호스트 폴더가 그 경로를 덮어서 **호스트의 파일이 우선**됨
+
+📷 (docker run, docker ps 캡처)
+
+#### 2. 변경 전 상태
+```bash
+$ cat site/index.html
+$ curl http://localhost:8082
+```
+📷 (변경 전 cat, curl 캡처)
+
+#### 3. 호스트에서 파일 수정 (컨테이너는 건드리지 않음)
+```bash
+$ sed -i 's/Hello from my custom image!/Hello from BIND MOUNT!/' site/index.html
+```
+- `sed -i 's/찾을글자/바꿀글자/' 파일`: 파일 안의 문구를 찾아 바꿔서 저장
+- 컨테이너 재시작, 이미지 재빌드는 **하지 않음**
+
+#### 4. 변경 후 상태
+```bash
+$ cat site/index.html
+$ curl http://localhost:8082
+(실제 출력으로 교체: Hello from BIND MOUNT!)
+```
+**브라우저 접속** (주소창 `localhost:8082` + 응답 화면)
+📷 (변경 후 cat, curl, 브라우저 캡처)
+
+#### 5. 변경 전/후 비교
+
+| 구분 | 호스트 `site/index.html` | `curl http://localhost:8082` 응답 | 컨테이너 재시작/재빌드 |
+|---|---|---|---|
+| 변경 전 | `Hello from my custom image!` | `Hello from my custom image!` | - |
+| 변경 후 | `Hello from BIND MOUNT!` | `Hello from BIND MOUNT!` | **하지 않음** |
+
+#### 4. 검증 요약
+
+| 검증 항목 | 명령 | 결과 |
+|---|---|---|
+| 바인드 마운트 연결 | `docker run -v "$(pwd)/site":...` | `bind-test` 실행, `8082->80` |
+| 변경 전 응답 | `curl` | 기존 문구 |
+| 호스트 파일 수정 | `sed -i` | `site/index.html` 변경 |
+| 변경 후 응답 | `curl`, 브라우저 | 수정한 문구가 재시작 없이 반영 |
+
+### 5. 정리 (이 단계에서 이해한 점)
+- 바인드 마운트는 호스트와 컨테이너가 같은 파일을 공유해서, 개발 중 코드를 고치면 바로 확인할 수 있다.
+- `COPY`는 이미지에 내용을 고정하는 방식이고, 바인드 마운트는 실행 시점에 호스트 파일을 연결하는 방식이다.
+- 볼륨(STEP 9)은 Docker가 관리하는 저장 공간이고, 바인드 마운트는 호스트의 경로를 직접 지정한다는 점이 다르다.
 
 
 
@@ -644,14 +985,19 @@ $ docker logs --tail 5 my-nginx
 
 
 
+-------------------------------------------------------------------------------------- 
 
+## STEP 10. Git 설정 및 GitHub 연동
 
+--------------------------------------------------------------------------------------
 
+### Git과 GitHub의 역할 차이
 
-
-
-
-
-
+| 구분 | Git | GitHub |
+|---|---|---|
+| 정체 | 버전 관리 도구(프로그램) | Git 저장소를 올려 협업하는 원격 플랫폼(서비스) |
+| 위치 | 내 PC(로컬) | 인터넷(원격) |
+| 하는 일 | 변경 이력을 커밋으로 기록, 브랜치 관리 | 저장소 공유, 협업, 백업, 제출 |
+| 대표 명령 | `git add`, `git commit` | `git push`, `git pull`(원격과 주고받기) |
 
 
