@@ -35,18 +35,9 @@
 체크 표시는 지금까지 근거가 있는 항목만 했어요. STEP 7은 8081 브라우저 캡처가 아직 없어서 캡처 후에 확정할 예정.
 
 --------------------------------------------------------------------------------------    
-
-## STEP 1. 리눅스 기본 명령어 및 절대경로 v 상대경로
-
-
-✅ 1단계: 환경 확인 명령어 (windows : PowerShell 에서 확인)
-
-        wsl --list
-  
-<img width="505" height="101" alt="image" src="https://github.com/user-attachments/assets/f9432d1a-95f5-45e0-95e8-0c6b4cf7eb10" />
-
-
-✅ 2단계: 리눅스 터미널에서 환경 정보 확인
+## 1. 리눅스 CLI 및 파일(경로 및 권한)  
+--------------------------------------------------------------------------------------
+✅ 리눅스 터미널에서 환경 정보 확인
   
         uname -a               # 커널 정보 (Linux로 시작하는지)  
         cat /etc/os-release    # 배포판/버전 (Ubuntu 확인)
@@ -58,18 +49,20 @@
 
 ### 주요 명령어 요약
 
-| 번호 | 명령어 | 의미 | 설명 |
-|------|--------|------|------|
-| ① | `pwd` | print working directory | 현재 작업 중인 디렉터리 경로 출력 |
-| ② | `ls` | list | 현재 폴더의 파일·디렉터리 목록 표시 |
-| ③ | `ls -a` | list all | 숨김 파일(`.`으로 시작)까지 모두 표시 |
-| ④ | `cd` | change directory | 디렉터리 이동 (`cd ..` 상위, `cd ~` 홈) |
-| ⑤ | `mkdir` | make directory | 새 폴더 생성 |
-| ⑥ | `touch` | - | 빈 파일 생성 |
-| ⑦ | `cat` | concatenate | 파일 내용을 터미널에 출력 |
-| ⑧ | `cp` | copy | 파일/폴더 복사 (`cp 원본 사본`) |
-| ⑨ | `mv` | move | 이동 또는 이름 변경 (`mv 원본 대상`) |
-| ⑩ | `rm` | remove | 파일 삭제 (`rm -r` 폴더 삭제) |
+| 명령어 | 의미 | 설명 |
+|--------|------|------|
+| `pwd` | print working directory | 현재 작업 중인 디렉터리 경로 출력 |
+| `ls` | list | 현재 폴더의 파일·디렉터리 목록 표시 |
+| `ls -a` | list all | 숨김 파일(`.`으로 시작)까지 모두 표시 |
+| `cd` | change directory | 디렉터리 이동 (`cd ..` 상위, `cd ~` 홈) |
+| `mkdir` | make directory | 새 폴더 생성 |
+| `touch` | - | 빈 파일 생성 |
+| `cat` | concatenate | 파일 내용을 터미널에 출력 |
+| `cp` | copy | 파일/폴더 복사 (`cp 원본 사본`) |
+| `mv` | move | 이동 또는 이름 변경 (`mv 원본 대상`) |
+| `rm` | remove | 파일 삭제 (`rm -r` 폴더 삭제) |
+
+<img width="1217" height="350" alt="image" src="https://github.com/user-attachments/assets/f8dd91c0-7eca-4603-a7dc-96d7dfd46eb9" />
 
 💡 자주 쓰는 옵션 추가 설명  
 | 번호 | 명령어 | 
