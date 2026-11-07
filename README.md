@@ -34,11 +34,11 @@
 
 체크 표시는 지금까지 근거가 있는 항목만 했어요. STEP 7은 8081 브라우저 캡처가 아직 없어서 캡처 후에 확정할 예정.
 
---------------------------------------------------------------------------------------    
-## 📌 리눅스 CLI 및 파일(절대/상대)  
---- 
+--------------------------------------------------------------------------------------  
+## 📌 리눅스 CLI     
+-------------------------------------------------------------------------------------- 
 
-✅ 리눅스 터미널에서 환경 정보 확인
+- 리눅스 터미널에서 환경 정보 확인
   
         uname -a               # 커널 정보 (Linux로 시작하는지)  
         cat /etc/os-release    # 배포판/버전 (Ubuntu 확인)
@@ -90,10 +90,10 @@ WSL이란? 윈도우 안에서 리눅스를 실행할 수 있게 해주는 기�
 
 --------------------------------------------------------------------------------------    
 ## 📌 파일 경로 및 권한 설정
----
+--------------------------------------------------------------------------------------
  
 
-### 1. 절대 경로와 상대 경로
+###  절대 경로와 상대 경로
 
 | 구분 | 설명 | 이 실습의 예시 |
 |---|---|---|
@@ -105,9 +105,9 @@ WSL이란? 윈도우 안에서 리눅스를 실행할 수 있게 해주는 기�
 - 바인드 마운트(STEP 9)에서 `$(pwd)/site`로 절대 경로를 만들어 쓴 이유다.
 
 
-#### 2. 권한(permission) 설정
+###  권한(permission) 설정
 
-권한 표기 형식 예시: `-rwxr-xr--`
+✅권한 표기 형식 예시: `-rwxr-xr--`
 
 ```
 -    rwx    r-x    r--
@@ -156,10 +156,11 @@ ls -l                    # [변경 후] 권한 확인
 - 윈도우 영역(`/mnt/c`)이 아닌 리눅스 홈(`~`)에서 권한이 정상 적용됨을 확인함.
 
 
---------------------------------------------------------------------------------------    
-## 📌 Docker 설치 및 운영 
----  
+--------------------------------------------------------------------------------------  
 
+## 📌 Docker 설치 및 이미지 와 컨테이너 
+
+-------------------------------------------------------------------------------------- 
 
 - Docker 설치 및 데몬 실행
  
@@ -178,7 +179,7 @@ ls -l                    # [변경 후] 권한 확인
   - WSL 환경에서는 부팅 시 자동 실행되지 않아 수동으로 시작해야 할 수 있음
 - docker info : 클라이언트/서버 버전, 플러그인, 컨테이너 수 등 상세 정보 확인
 
-🪟 새로운 용어 정리  
+* 새로운 용어 정리  
 sudo ( Super User DO ) : 잠깐 관리자(root) 권한을 빌려서 명령을 실행할 때 사용.  
 apt ( Advanced Package Tool ) : Ubuntu / Debian 계열 리눅스에서 쓰는 패키지 관리 도구, 프로그램을 설치·삭제·업데이트할 때 사용합니다.
 
@@ -211,37 +212,31 @@ apt ( Advanced Package Tool ) : Ubuntu / Debian 계열 리눅스에서 쓰는 �
 
 ---
 
-#### 1. 이미지(Image) 
+### ✅ 이미지(Image) 
 
-✅ 1. 이미지 다운로드
 ```bash
-docker pull nginx:latest
-```
-- `pull`: 레지스트리(기본 Docker Hub)에서 이미지를 받아옵니다.
-- `nginx:latest`: `이미지명:태그` 형식. 태그 생략 시 `latest`.
-
-✅ 2. 이미지 목록 확인
-```bash
-docker images
+      docker pull nginx:latest        #이미지 다운로드
+      docker images                  #이미지 목록 확인
+    
+    - `pull`: 레지스트리(기본 Docker Hub)에서 이미지를 받아옵니다.
+    - `nginx:latest`: `이미지명:태그` 형식. 태그 생략 시 `latest`.
 ```
 출력 예시:
 ```
-REPOSITORY   TAG       IMAGE ID       CREATED       SIZE
-nginx        latest    xxxxxxxxxxxx   2 weeks ago   187MB
+      REPOSITORY   TAG       IMAGE ID       CREATED       SIZE
+      nginx        latest    xxxxxxxxxxxx   2 weeks ago   187MB
+      
+      - **IMAGE ID**: 이미지 고유 식별자
+      - **SIZE**: 이미지 용량
 ```
-- **IMAGE ID**: 이미지 고유 식별자
-- **SIZE**: 이미지 용량
 
+> 이미지 다운 및 목록 확인 출력화면
 
-<img width="1447" height="573" alt="image" src="https://github.com/user-attachments/assets/ad06e420-7a1d-4874-bef7-204a0c48b46c" />   
-
-
-*** 처음 docker pull nginx:latest 실행했을 떄 권한 오류 발생 함.
--> 해결 방법
+><img width="1447" height="573" alt="image" src="https://github.com/user-attachments/assets/ad06e420-7a1d-4874-bef7-204a0c48b46c" />   
 
 
 #### 🔍 트러블슈팅 1: docker pull 시 권한 오류
-
+*** 처음 docker pull nginx:latest 실행했을 떄 권한 오류 발생 함.
 - **문제**: `docker pull nginx:latest` 실행 시 아래 오류 발생
   permission denied while trying to connect to the docker API at unix:///var/run/docker.sock
 - **원인 가설**: 현재 사용자가 `docker` 그룹에 속하지 않아 docker.sock 접근이 거부됨
@@ -252,21 +247,18 @@ nginx        latest    xxxxxxxxxxxx   2 weeks ago   187MB
 
 
 
-#### 2. 컨테이너(Container)  
-
-✅ 1. 컨테이너 실행, 중지, 목록, 삭제
-```bash
-    docker run -d --name web -p 8080:80 nginx
-```
-- `-d`: 백그라운드(detached) 실행
-- `--name web`: 컨테이너 이름 지정
-- `-p 8080:80`: 호스트 8080 → 컨테이너 80 포트 연결
+### ✅ 컨테이너(Container)  
 
 ```bash
-    docker ps -a                                #전체 컨테이너 목록 조회
-    docker stop stupefied_spence                #실행 중이므로 먼저 중지
-    docker rm stupefied_spence                  # 제거
-    docker stop web
+    docker run -d --name web -p 8080:80 nginx       #컨테이너 실행
+    docker ps -a                                    #전체 컨테이너 목록 조회
+    docker stop stupefied_spence                    #실행 중이므로 먼저 중지
+    docker rm stupefied_spence                      #컨테이너 제거
+    docker stop web                                 #컨테이너 중지
+    
+    - `-d`: 백그라운드(detached) 실행
+    - `--name web`: 컨테이너 이름 지정
+    - `-p 8080:80`: 호스트 8080 → 컨테이너 80 포트 연결
 ```
 
 >  docker 실행, 중지, 목록, 삭제 실행 화면  
@@ -278,27 +270,26 @@ nginx        latest    xxxxxxxxxxxx   2 weeks ago   187MB
 
 
 
-#### 3. 운영(모니터링)
-
-✅ 1. 로그 확인
-```bash
-docker logs web
-docker logds -f web      # 실시간 로그 (follow)
+### ✅ 모니터링 
+ 
+```bash  
+      docker logs web          # 로그 확인
+      docker logds -f web      # 실시간 로그 (follow)
+      
+      - 애플리케이션 표준 출력/에러를 확인할 수 있어 디버깅에 유용합니다.
 ```
-- 애플리케이션 표준 출력/에러를 확인할 수 있어 디버깅에 유용합니다.
+> docker logs web 실행 화면
 
-> docker logs web 실행 화면  
-<img width="1172" height="350" alt="image" src="https://github.com/user-attachments/assets/50cd31ed-dd25-4116-81d3-d1801aad2dae" />
+> <img width="1172" height="350" alt="image" src="https://github.com/user-attachments/assets/50cd31ed-dd25-4116-81d3-d1801aad2dae" />
 
-
-✅ 2. 리소스 사용량 확인
-```bash
-docker stats
-docker stats web        # 특정 컨테이너만
-docker stats --no-stream   # 한 번만 출력 후 종료 (문서화에 편리)
+```bash  
+      docker stats                #리소스 사용량 확인
+      docker stats web            #특정 컨테이너만
+      docker stats --no-stream    #한 번만 출력 후 종료 (문서화에 편리)
 ```
-> docker stats web 실행 화면  
-<img width="1107" height="61" alt="image" src="https://github.com/user-attachments/assets/77426bdb-bac5-475f-91da-e7a3c62017f0" />
+> docker stats web 실행 화면
+  
+><img width="1107" height="61" alt="image" src="https://github.com/user-attachments/assets/77426bdb-bac5-475f-91da-e7a3c62017f0" />
 
 
 🪟 전체 흐름 한눈에 보기
@@ -314,19 +305,21 @@ docker stop   →  컨테이너 중지
 ```
 
 --------------------------------------------------------------------------------------    
-## 📌 컨테이너 실행
----   
 
-✅ 1. hello-world 실행 : `hello-world`: Docker가 정상 설치됐는지 확인하는 테스트용 이미지
+## 📌 컨테이너 실행 및 attach vs exec
+
+--------------------------------------------------------------------------------------   
+
+- hello-world 실행 : `hello-world`: Docker가 정상 설치됐는지 확인하는 테스트용 이미지
 
 ```bash
 docker run hello-world
 ```
-> docker run hello-world 실행 화면 
-<img height="300" alt="image" src="https://github.com/user-attachments/assets/2ed61b8f-c171-463e-8aaf-b557334af4b6" />  
+> docker run hello-world 실행 화면  
+><img height="300" alt="image" src="https://github.com/user-attachments/assets/2ed61b8f-c171-463e-8aaf-b557334af4b6" />  
 
 
-💡Docker 동작 과정 : client → daemon → 이미지 pull → 컨테이너 생성 → 출력 전달   
+💡**Docker 동작 과정** : client → daemon → 이미지 pull → 컨테이너 생성 → 출력 전달   
 
 | 단계 | 내용 | 의미 |
 |:---:|------|------|
@@ -382,15 +375,11 @@ docker run -it ubuntu
 
 먼저 백그라운드로 컨테이너 실행
 ```bash
-docker run -dit --name test ubuntu
+      docker run -dit --name test ubuntu
+      docker attach test
+      docker exec -it test bash
+      - `-d`: 백그라운드(detached) 실행
 ```
-- `-d`: 백그라운드(detached) 실행
-
-```bash
-docker attach test
-docker exec -it test bash
-```
-
 > attach, exec 실행 화면
 <img width="998" height="377" alt="image" src="https://github.com/user-attachments/assets/a562bc4e-5202-4d6f-a655-103a21fdbac0" />
 
@@ -400,12 +389,9 @@ docker exec -it test bash
 - `exec`는 **새 명령을 추가로 실행하는 것**
 - 실무에서는 컨테이너 중지를 피하려고 주로 `exec`를 사용함
 
-
-
-
 --------------------------------------------------------------------------------------   
 ## 📌 기존 Dockerfile 기반 커스텀 이미지 제작 
----   
+--------------------------------------------------------------------------------------   
 
 #### 1. 선택한 방식과 베이스
 - **선택 방식**: (A) 웹 서버 베이스 이미지 활용 + 정적 콘텐츠/설정 교체
@@ -555,21 +541,9 @@ $ docker logs --tail 5 my-nginx
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
 --------------------------------------------------------------------------------------
 ## 📌 포트 매핑 및 접속
----  
+--------------------------------------------------------------------------------------
 
 ### 1. 목표
 - 7단계에서 만든 **같은 이미지**(`my-custom-nginx:1.0`)로 컨테이너를 **2개** 실행하고, 호스트 포트를 서로 다르게(8080, 8081) 연결해 각각 접속되는지 확인한다.
@@ -650,25 +624,9 @@ $ docker logs --tail 5 my-nginx-8081
 - 포트 매핑 `-p 호스트:컨테이너`는 격리된 컨테이너를 호스트에서 접근 가능하게 연결하는 설정이다.
 - 하나의 이미지로 컨테이너를 여러 개 만들 수 있고, 호스트 포트만 다르게 하면 동시에 실행된다.
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 -------------------------------------------------------------------------------------- 
 ## 📌 Docker 볼륨 영속성 검증 
----   
+--------------------------------------------------------------------------------------  
 
 ### 1. 목표
 - Docker 볼륨을 생성하고 컨테이너에 연결한다.
@@ -752,7 +710,7 @@ $ docker exec vol-test2 bash -c "cat /data/hello.txt"
 
 -------------------------------------------------------------------------------------- 
 ## 📌 바인드 마운트 반영 검증
----   
+-------------------------------------------------------------------------------------- 
 
 ### 1. 목표
 - 호스트(내 PC)의 폴더를 컨테이너에 바인드 마운트로 연결한다.
@@ -833,16 +791,9 @@ $ curl http://localhost:8082
 - `COPY`는 이미지에 내용을 고정하는 방식이고, 바인드 마운트는 실행 시점에 호스트 파일을 연결하는 방식이다.
 - 볼륨(STEP 9)은 Docker가 관리하는 저장 공간이고, 바인드 마운트는 호스트의 경로를 직접 지정한다는 점이 다르다.
 
-
-
-
-
-
-
-
 -------------------------------------------------------------------------------------- 
 ## 📌 Git 설정 및 GitHub 연동
----   
+--------------------------------------------------------------------------------------  
 
 ### Git과 GitHub의 역할 차이
 
