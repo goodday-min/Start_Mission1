@@ -10,13 +10,13 @@
 
 | 항목 | 내용 |
 |---|---|
-| 호스트 OS | Windows (세부 버전: 집에서 확인) |
+| 호스트 OS | Windows  |
 | Linux | WSL 2, Ubuntu 26.04.1 LTS |
 | 셸 | /bin/bash |
 | 커널 | Linux 6.18.54.1 |
-| 터미널 | (집에서 확인: 사용 중인 터미널 앱 이름) |
-| Docker | 29.1.3 (`docker --version` 기준) |
-| Git | (집에서 `git --version`으로 확인) |
+| 터미널 | Windows Terminal (WSL Ubuntu) |
+| Docker | 29.1.3 |
+| Git | git version 2.55.0.windows.4 |
 | 작업 경로 | 리눅스 홈 `~/codyssey/docker-custom` |
 
 ## 수행 체크리스트
@@ -35,7 +35,7 @@
 체크 표시는 지금까지 근거가 있는 항목만 했어요. STEP 7은 8081 브라우저 캡처가 아직 없어서 캡처 후에 확정할 예정.
 
 --------------------------------------------------------------------------------------    
-## 1. 리눅스 CLI 및 파일(경로 및 권한)  
+## 1. 리눅스 CLI 및 파일(절대/상대)  
 --------------------------------------------------------------------------------------
 ✅ 리눅스 터미널에서 환경 정보 확인
   
@@ -73,9 +73,6 @@
 |cp -r 폴더 대상 |  폴더를 통째로 복사 (-r: 재귀)  |
 |rm -r 폴더명    |  폴더 삭제 (안에 내용이 있을 때)  |
 
-
-
-
 🔍 리눅스 환경, 어떤 걸 쓸 수 있나요?  
 
 | 방법 | 설명 | 확인 방법 |
@@ -83,12 +80,15 @@
 | **WSL** | Windows 안에서 리눅스 실행 (추천) | PowerShell에 `wsl --list` |
 | **Git Bash** | Git 설치 시 포함, 리눅스 명령어 호환 | `git --version` 됐다면 사용 가능 |
 | **가상머신 (VM)** | VirtualBox 등에 우분투 설치 | 이미 설치했다면 실행 |
-| **실제 리눅스 PC** | 우분투 등 설치된 컴퓨터 | 바로 터미널 열기 |
+| **실제 리눅스 PC** | Ubuntu 등 설치된 컴퓨터 | 바로 터미널 열기 |
 
 🪟 새로운 용어 정리    
 WSL이란? 윈도우 안에서 리눅스를 실행할 수 있게 해주는 기능  
 셸(Shell)이란? 사용자의 명령을 해석해서 운영체제에 전달하는 프로그램    
 커널(Kernel)이란?  운영체제의 핵심(중심부) - uname -a에서 봤던 Linux 6.18...이 바로 커널 버전  
+
+--------------------------------------------------------------------------------------    
+##  STEP 2. 파일(절대/상대) 및 권한 설정
 
 
 ### 절대 경로와 상대 경로
@@ -103,18 +103,8 @@ WSL이란? 윈도우 안에서 리눅스를 실행할 수 있게 해주는 기�
 - 바인드 마운트(STEP 9)에서 `$(pwd)/site`로 절대 경로를 만들어 쓴 이유다.
 
 
---------------------------------------------------------------------------------------    
-##  STEP 2. 권한 실습 및 증거 기록 (요구사항3)
+#### 권한(permission) 설정
 
-
-### 과제 목표
-- 파일/디렉토리의 권한을 **확인·변경**하는 명령을 수행한다.
-- 권한 변경 **전/후를 비교**하여 기술 문서에 기록한다.
-- 최소 요구: **파일 1개, 디렉토리 1개**에 대해 권한 변경 실험 수행.
-
----
-
-#### ✅ 1. 권한(permission) 개념
 권한 표기 형식 예시: `-rwxr-xr--`
 
 ```
@@ -143,40 +133,25 @@ WSL이란? 윈도우 안에서 리눅스를 실행할 수 있게 해주는 기�
 
 ---
 
-💻 실습 명령어
 ```bash
 cd ~                     # 리눅스 홈 디렉토리로 이동
 mkdir perm_test          # 실습용 폴더 생성
 cd perm_test             # 폴더로 이동
 touch sample.txt         # 실습용 파일 생성
 mkdir sample_dir         # 실습용 디렉토리 생성
-
 ls -l                    # [변경 전] 권한 확인
-
 chmod 744 sample.txt     # 파일 권한 변경 (rwxr--r--) 
 chmod 700 sample_dir     # 디렉토리 권한 변경 (rwx------)  
-
 ls -l                    # [변경 후] 권한 확인
 ```
 
 ---
 
 📊 권한 변경 전/후 비교
-| 대상 | 변경 전 | 변경 후 | 사용 명령 |
-|------|---------|---------|-----------|
-| sample.txt (파일) | rw-r--r-- (644) | rwxr--r-- (744) | `chmod 744 sample.txt` |
-| sample_dir (디렉토리) | rwxr-xr-x (755) | rwx------ (700) | `chmod 700 sample_dir` |
-
----
-
-### 📷 증거 캡처
-**변경 전**
-<img width="687" height="136" alt="image" src="https://github.com/user-attachments/assets/b587d7dc-7eab-421f-a63a-58d599364685" />
-
-
-**변경 후**
-<img width="687" height="142" alt="image" src="https://github.com/user-attachments/assets/9566e7f4-4bb2-410f-be89-f90545d1d2fc" />
-
+| 대상 | 변경 전 | 변경 후 | 사용 명령 | --- | 
+|------|---------|---------|-----------| --- | 
+| sample.txt (파일) | rw-r--r-- (644) | rwxr--r-- (744) | `chmod 744 sample.txt` | <img width="687" height="136" alt="image" src="https://github.com/user-attachments/assets/b587d7dc-7eab-421f-a63a-58d599364685" /> | 
+| sample_dir (디렉토리) | rwxr-xr-x (755) | rwx------ (700) | `chmod 700 sample_dir` | <img width="687" height="142" alt="image" src="https://github.com/user-attachments/assets/9566e7f4-4bb2-410f-be89-f90545d1d2fc" /> | 
 
 ---
 
@@ -187,83 +162,39 @@ ls -l                    # [변경 후] 권한 확인
 
 ---
 
-🔢 참고: 자주 쓰는 권한 숫자
-| 숫자 | 권한 | 의미 |
-|------|------|------|
-| 777 | rwxrwxrwx | 모두 모든 권한 (보안 취약) |
-| 755 | rwxr-xr-x | 소유자 전부, 나머지 읽기·실행 |
-| 744 | rwxr--r-- | 소유자 전부, 나머지 읽기만 |
-| 700 | rwx------ | 소유자만 전부 |
-| 644 | rw-r--r-- | 소유자 읽기·쓰기, 나머지 읽기 |
-
 --------------------------------------------------------------------------------------    
 
-##  STEP 3. Docker 설치 점검 (요구사항 4)
+## 3. Docker 설치 및 운영 
 
-🐳 Docker 설치 방법
-                
-                sudo apt update              # 패키지 목록 최신화 (관리자 권한으로, 설치 가능한 패키지 목록을 최신으로 갱신) 
-                sudo apt install docker.io   # Docker 설치
-                
+- Docker 설치 및 데몬 실행
+ 
+```bash               
+        sudo apt update              # 패키지 목록 최신화 (관리자 권한으로, 설치 가능한 패키지 목록을 최신으로 갱신) 
+        sudo apt install docker.io   # Docker 설치
 
-✅ 1. Docker 버전 확인  
-
-                 docker --version
-
-✅ 2. Docker 데몬 동작 확인 (Docker 전체 시스템 정보 조회)  
-
-                 docker info 
-
-✅ 3. Docker 데몬 동작 확인 
-
-                 sudo service docker start  
-        
-
-💻 실행 결과
-
-```bash
-$ docker --version
-Docker version 29.1.3, build 29.1.3-0ubuntu4.1
-
-$ sudo service docker start
-
-$ sudo docker info
-Client:
- Version:    29.1.3
- Context:    default
- Debug Mode: false
+        docker --version             #Docker 버전 확인
+        docker info                  #Docker 데몬 동작 확인
+        sudo service docker start    #Docker 데몬 실행
 ```
-
->   
 > <img width="741" height="287" alt="image" src="https://github.com/user-attachments/assets/2cd84ae9-5107-4d24-b4ab-2f57e6d055e1" />
 
-→ 데몬이 켜져 있으면 서버 정보가 쭉 나와요.   
-→ 꺼져 있으면 Cannot connect to the Docker daemon... 같은 에러가 나요.   
-
-🔍 개념 정리
-
-- **Docker**: 애플리케이션을 **컨테이너** 단위로 패키징하여 어디서든 동일하게 실행할 수 있게 해주는 플랫폼
-- **`docker --version`**: 클라이언트 버전만 간단히 확인
-- **`service docker start`**: Docker 데몬(백그라운드 서비스)을 실행하는 명령
+- docker --version : 클라이언트 버전만 간단히 확인
+- service docker start : Docker 데몬(백그라운드 서비스)을 실행하는 명령
   - WSL 환경에서는 부팅 시 자동 실행되지 않아 수동으로 시작해야 할 수 있음
-- **`docker info`**: 클라이언트/서버 버전, 플러그인, 컨테이너 수 등 상세 정보 확인
+- docker info : 클라이언트/서버 버전, 플러그인, 컨테이너 수 등 상세 정보 확인
 
 🪟 새로운 용어 정리  
 sudo ( Super User DO ) : 잠깐 관리자(root) 권한을 빌려서 명령을 실행할 때 사용.  
 apt ( Advanced Package Tool ) : Ubuntu / Debian 계열 리눅스에서 쓰는 패키지 관리 도구, 프로그램을 설치·삭제·업데이트할 때 사용합니다.
 
 
---------------------------------------------------------------------------------------    
-
-## STEP 4. Docker 기본 운영 명령 수행 (요구사항 5)   
-
 🔍 Docker 핵심 개념 정리
 
-- Docker   
-> 애플리케이션을 **컨테이너**라는 격리된 공간에서 실행하는 가상화 기술입니다.  
+- **Docker**     
+> 애플리케이션을 **컨테이너** 단위로 패키징하여 어디서든 동일하게 실행할 수 있게 해주는 플랫폼    
 > 실행 환경(라이브러리, 설정 등)을 **이미지**로 묶어두기 때문에, "내 PC에서는 되는데..." 문제를 줄여줍니다.  
 
-- 이미지(Image)   
+- **이미지(Image)**   
 > 컨테이너를 만들기 위한 **설계도 / 템플릿**입니다.  
 > 애플리케이션 코드 + 실행에 필요한 라이브러리·설정이 포함된 **읽기 전용** 파일입니다.  
 > 한 개의 이미지로 **여러 개의 컨테이너**를 만들 수 있습니다.  
@@ -271,7 +202,7 @@ apt ( Advanced Package Tool ) : Ubuntu / Debian 계열 리눅스에서 쓰는 �
 > 
 > 비유: 이미지는 '붕어빵 틀', 컨테이너는 '찍어낸 붕어빵'  
 
-- 컨테이너(Container)   
+- **컨테이너(Container)**   
 > 이미지를 실행한 **실제 동작 중인 인스턴스**입니다.   
 > 서로 격리되어 있어 한 컨테이너의 문제가 다른 컨테이너에 영향을 주지 않습니다.   
 > 생성 → 실행 → 중지 → 삭제의 **생명주기(Life Cycle)** 를 가집니다.    
@@ -285,18 +216,14 @@ apt ( Advanced Package Tool ) : Ubuntu / Debian 계열 리눅스에서 쓰는 �
 
 ---
 
-- 모니터링(Monitoring)
+- **모니터링(Monitoring)**
 > 컨테이너가 **정상 동작하는지, 자원을 얼마나 쓰는지** 확인하는 운영 활동입니다.
-> 주요 관찰 대상:
 > **로그(logs)**: 애플리케이션의 출력·에러 메시지 → 문제 원인 파악
 > **리소스(stats)**: CPU·메모리·네트워크 사용량 → 성능·부하 확인
 
 ---
 
-
-
-
-## 1. 이미지(Image) 관련
+### 1. 이미지(Image) 
 
 ✅ 1. 이미지 다운로드
 ```bash
@@ -335,84 +262,41 @@ nginx        latest    xxxxxxxxxxxx   2 weeks ago   187MB
   sudo usermod -aG docker $USER
   (터미널 재접속 후) `groups`에 docker 표시 확인 → `docker images` 정상 동작
 
-### 트러블슈팅 2: git pull 시 추적 브랜치(upstream) 정보 없음
-
-- **문제**: `git pull` 실행 시 원격 저장소에서 객체는 받아왔지만, 병합 단계에서 아래 메시지가 나오며 중단됨
-  ```
-  From https://github.com/goodday-min/Start_Mission1
-     a502009..dce431e  main       -> origin/main
-  There is no tracking information for the current branch.
-  Please specify which branch you want to merge with.
-  ```
-- **원인 가설**: 로컬 브랜치 이름은 `master`, 원격 브랜치 이름은 `main`으로 서로 달라서, 로컬 `master`에 연결된 원격 브랜치(upstream)가 설정되어 있지 않음. 그래서 `git pull`이 어느 브랜치와 병합할지 알 수 없음
-- **확인**:
-  - `git branch -a` → 로컬은 `* master`만 있고, 원격은 `remotes/origin/main`(`origin/HEAD -> origin/main`)임을 확인
-  - `git log --oneline` → 로컬 `a502009 Initial commit`이 원격 이전 지점(`a502009..dce431e`)과 같은 커밋임을 확인 (같은 저장소에서 시작했고 원격만 앞서 나간 상태, 서로 다른 히스토리가 아님)
-  - `git status` → 추적되지 않은 파일(Untracked)만 있고 변경된 파일은 없음을 확인 (병합해도 로컬 작업 손실 없음)
-  - `git config core.quotepath false` → 한글 파일명이 `\353\252...` 형태로 깨져 보이던 것을 한글로 표시
-- **해결**:
-  ```bash
-  git branch -m master main                      # 로컬 브랜치 이름을 main으로 변경
-  git branch --set-upstream-to=origin/main main  # main과 origin/main 연결
-  git pull                                       # 이후부터는 git pull만으로 동작
-  ```
-  `git status`에서 `Your branch is up to date with 'origin/main'`가 나오는지 확인
-- **대안**: 이름을 바꾸지 않고 한 번만 브랜치를 지정해서 실행 → `git pull origin main` (연결은 설정되지 않아 다음에도 같은 메시지가 나옴)
-
-> (해결 후 `git pull`, `git status` 실행 화면 캡처를 여기에 추가)
-
 ---
 
-## 2. 컨테이너(Container) 관련
+### 2. 컨테이너(Container) 관련
 
-✅ 1. 컨테이너 실행
+✅ 1. 컨테이너 실행, 중지, 목록, 삭제
 ```bash
-docker run -d --name web -p 8080:80 nginx
+    docker run -d --name web -p 8080:80 nginx
 ```
 - `-d`: 백그라운드(detached) 실행
 - `--name web`: 컨테이너 이름 지정
 - `-p 8080:80`: 호스트 8080 → 컨테이너 80 포트 연결
 
-
-- 오류 발생
-- 1. 해결방법 : 포트 충돌 컨테이너 중지후 삭제
-> docker ps -a                                #전체 컨테이너 목록 조회
-> docker stop stupefied_spence                #실행 중이므로 먼저 중지
-> docker rm stupefied_spence                  # 제거
-
-- 2. 해결방법 : 실패로 남은 web 컨테이너 제거
-> docker rm web                               # Created 상태라 stop 없이 바로 제거 가능
- 
-- 3. 컨테이너 확인
-> docker ps -a
-
-✅ 2. 실행 중인 컨테이너 목록
 ```bash
-docker ps
+    docker ps -a                                #전체 컨테이너 목록 조회
+    docker stop stupefied_spence                #실행 중이므로 먼저 중지
+    docker rm stupefied_spence                  # 제거
+    docker stop web
+
 ```
 
-✅ 3. 전체 컨테이너 목록 (중지된 것 포함)
-```bash
-docker ps -a
-```
+>  docker 실행, 중지, 목록, 삭제 실행 화면  
 
 <img width="1450" height="167" alt="image" src="https://github.com/user-attachments/assets/d486bc89-7366-4ec6-8483-0af9ce2571b2" />  
 
-✅ 4. 컨테이너 중지
-```bash
-docker stop web
-```
 
 <img width="1448" height="256" alt="image" src="https://github.com/user-attachments/assets/f4d1373d-affe-492f-834d-2232beeeca20" />  
 
 
 
-## 3. 운영(모니터링) 관련
+### 3. 운영(모니터링) 관련
 
 ✅ 1. 로그 확인
 ```bash
 docker logs web
-docker logs -f web      # 실시간 로그 (follow)
+docker logds -f web      # 실시간 로그 (follow)
 ```
 - 애플리케이션 표준 출력/에러를 확인할 수 있어 디버깅에 유용합니다.
 
@@ -430,7 +314,7 @@ docker stats --no-stream   # 한 번만 출력 후 종료 (문서화에 편리)
 <img width="1107" height="61" alt="image" src="https://github.com/user-attachments/assets/77426bdb-bac5-475f-91da-e7a3c62017f0" />
 
 
-## 4. 전체 흐름 한눈에 보기
+🪟 전체 흐름 한눈에 보기
 ```
 docker pull   →  이미지 다운로드
 docker images →  이미지 목록 확인
@@ -443,7 +327,7 @@ docker stop   →  컨테이너 중지
 ```
 
 --------------------------------------------------------------------------------------    
-## STEP 5. 컨테이너 실행 실습
+## 4. 컨테이너 실행 실습
 --------------------------------------------------------------------------------------   
 
 ✅ 1. hello-world 실행 : `hello-world`: Docker가 정상 설치됐는지 확인하는 테스트용 이미지
@@ -517,9 +401,6 @@ docker run -dit --name test ubuntu
 
 ```bash
 docker attach test
-```
-
-```bash
 docker exec -it test bash
 ```
 
@@ -537,7 +418,7 @@ docker exec -it test bash
 
 --------------------------------------------------------------------------------------   
 
-## STEP 6. 기존 Dockerfile 기반 커스텀 이미지 제작 
+## 5. 기존 Dockerfile 기반 커스텀 이미지 제작 
 
 --------------------------------------------------------------------------------------    
 
