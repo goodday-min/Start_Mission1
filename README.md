@@ -804,7 +804,7 @@ $ curl http://localhost:8082
   ```
   **대안**: 이름을 바꾸지 않고 한 번만 브랜치를 지정해서 실행 → `git pull origin main` 
 
-![alt text](image.png)
+![alt text](img/image_git.png)
 -------------------------------------------------------------------------------------- 
 ## 📌 보너스 1. Docker Compose 기초 — 단일 서비스 실행
 -------------------------------------------------------------------------------------- 
@@ -928,7 +928,7 @@ $ docker compose up -d                        #실행
 $ docker compose ps
 
 ```
-![alt text](image.png)
+![alt text](img/image.png)
 
 - 서비스 2개가 한 번에 실행됨
 - Compose가 이 프로젝트 전용 네트워크를 자동으로 생성하고, 같은 네트워크의 서비스는 **서비스 이름**으로 서로를 찾을 수 있음
@@ -1052,7 +1052,7 @@ services:
 EOF
 $ cat docker-compose.yml
 ```
-![alt text](image-1.png)
+![alt text](img/image-1.png)
 
 | yml 항목 | 의미 |
 |---|---|
@@ -1064,7 +1064,7 @@ $ cat docker-compose.yml
 ```bash
 $ docker compose config
 ```
-![alt text](image-2.png)
+![alt text](img/image-2.png)
 
 ### 6. 변경 전 실행 (dev, 8092)
 ```bash
@@ -1074,7 +1074,7 @@ $ curl http://localhost:8092
 $ docker compose exec web env | grep APP_ENV
 APP_ENV=dev
 ```
-![alt text](image-3.png)
+![alt text](img/image-3.png)
 
 
 ### 7. `.env`만 수정해서 재실행 (prod, 8093)
@@ -1093,7 +1093,7 @@ APP_ENV=prod
 $ curl http://localhost:8092
 ```
 
-![alt text](image-4.png)
+![alt text](img/image-4.png)
 
 
 - `docker-compose.yml`과 이미지는 **수정하지 않고** `.env`의 두 줄만 바꿨다.
@@ -1102,7 +1102,7 @@ $ curl http://localhost:8092
 
 |변경 전|변경 후|
 |---|---|
-|![alt text](image-5.png) | ![ |](image-6.png)
+|![alt text](img/image-5.png) | ![ |](img/image-6.png)
 
 ### 8. 검증 요약
 
