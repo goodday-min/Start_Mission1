@@ -23,13 +23,13 @@
 - [x] 터미널 기본 조작 (STEP 1)
 - [x] 권한 변경 실습 (STEP 2)
 - [x] Docker 설치/점검 (STEP 3)
-- [x] Docker 이미지/컨테이너/로그/리소스 확인 (STEP 4)
-- [x] hello-world, ubuntu 컨테이너 실행 (STEP 5)
-- [x] Dockerfile 빌드/실행 (STEP 6)
-- [x] 포트 매핑 접속 2회 (STEP 7)
-- [x] 볼륨 영속성 (STEP 8)
-- [x] 바인드 마운트 반영 (STEP 9)
-- [x] Git 설정 + VSCode GitHub 연동 
+- [x] Docker 이미지/컨테이너/로그/리소스 확인 (STEP 3)
+- [x] hello-world, ubuntu 컨테이너 실행 (STEP 4)
+- [x] Dockerfile 빌드/실행 (STEP 5)
+- [x] 포트 매핑 접속 2회 (STEP 6)
+- [x] 볼륨 영속성 (STEP 7)
+- [x] 바인드 마운트 반영 (STEP 8)
+- [x] Git 설정 + VSCode GitHub 연동 (STEP 9)
 - [x] 보너스과제
 
 체크 표시는 지금까지 근거가 있는 항목만 했어요. STEP 7은 8081 브라우저 캡처가 아직 없어서 캡처 후에 확정할 예정.
@@ -66,7 +66,7 @@
 <img width="1217" height="350" alt="image" src="https://github.com/user-attachments/assets/f8dd91c0-7eca-4603-a7dc-96d7dfd46eb9" />
 
 💡 자주 쓰는 옵션 추가 설명  
-| 번호 | 명령어 | 
+| 명령어 | 설명 | 
 |------|--------|
 |ls -al          |  숨김 파일 포함 + 상세 정보(권한, 크기, 날짜)  |
 |cd ..           |  상위 폴더로 이동  |
@@ -102,7 +102,7 @@ WSL이란? 윈도우 안에서 리눅스를 실행할 수 있게 해주는 기�
 | `~` | 홈 디렉토리(`/home/user`)의 단축 표기 | `cd ~` → `pwd`: `/home/user` |
 
 - **언제 무엇을 쓰나**: 위치가 바뀌어도 항상 같은 곳을 가리켜야 하면 절대 경로(예: 스크립트, 바인드 마운트의 `-v` 호스트 경로), 같은 폴더 안에서 가깝게 작업할 때는 상대 경로가 간단하다.
-- 바인드 마운트(STEP 9)에서 `$(pwd)/site`로 절대 경로를 만들어 쓴 이유다.
+- 바인드 마운트(STEP 8)에서 `$(pwd)/site`로 절대 경로를 만들어 쓴 이유다.
 
 
 ###  권한(permission) 설정
@@ -169,8 +169,8 @@ ls -l                    # [변경 후] 권한 확인
     sudo apt install docker.io   # Docker 설치
 
     docker --version             #Docker 버전 확인
-    docker info                  #Docker 데몬 동작 확인
     sudo service docker start    #Docker 데몬 실행
+    docker info                  #Docker 데몬 동작 확인
 ```
 > <img width="741" height="200" alt="image" src="https://github.com/user-attachments/assets/2cd84ae9-5107-4d24-b4ab-2f57e6d055e1" />
 
@@ -236,7 +236,7 @@ apt ( Advanced Package Tool ) : Ubuntu / Debian 계열 리눅스에서 쓰는 �
 
 
 #### 🔍 트러블슈팅 1: docker pull 시 권한 오류
-*** 처음 docker pull nginx:latest 실행했을 떄 권한 오류 발생 함.
+*** 처음 docker pull nginx:latest 실행했을 때 권한 오류 발생 함.
 - **문제**: `docker pull nginx:latest` 실행 시 아래 오류 발생
   permission denied while trying to connect to the docker API at unix:///var/run/docker.sock
 - **원인 가설**: 현재 사용자가 `docker` 그룹에 속하지 않아 docker.sock 접근이 거부됨
@@ -274,7 +274,7 @@ apt ( Advanced Package Tool ) : Ubuntu / Debian 계열 리눅스에서 쓰는 �
  
 ```bash  
       docker logs web          # 로그 확인
-      docker logds -f web      # 실시간 로그 (follow)
+      docker logs -f web      # 실시간 로그 (follow)
       
       - 애플리케이션 표준 출력/에러를 확인할 수 있어 디버깅에 유용합니다.
 ```
@@ -356,7 +356,7 @@ docker run -it ubuntu
 |------|--------|------|
 | 동작 | 실행 중인 컨테이너의 **기존 프로세스(PID 1)** 화면에 연결 | 실행 중인 컨테이너에 **새 명령/프로세스**를 투입 |
 | 세션 | 메인 프로세스와 입출력을 공유 | 독립된 새 세션 |
-| 종료 영향 | `exit` 시 컨테이너가 **컨테이너 정지** | `exit` 해도 새 프로세스만 종료, 컨테이너는 **계속 실행** |
+| 종료 영향 | `exit` 시 컨테이너가 **정지** | `exit` 해도 새 프로세스만 종료, 컨테이너는 **계속 실행** |
 | 주 용도 | 메인 프로세스 로그/화면 보기 | 추가 작업, 디버깅 |
 
 🔑 핵심: 둘은 "하는 일"이 달라요  
@@ -534,7 +534,7 @@ $ docker logs --tail 5 my-nginx
 --------------------------------------------------------------------------------------
 
 ### 1. 목표
-- 7단계에서 만든 **같은 이미지**(`my-custom-nginx:1.0`)로 컨테이너를 **2개** 실행하고, 호스트 포트를 서로 다르게(8080, 8081) 연결해 각각 접속되는지 확인한다.
+- STEP 5에서 만든 **같은 이미지**(`my-custom-nginx:1.0`)로 컨테이너를 **2개** 실행하고, 호스트 포트를 서로 다르게(8080, 8081) 연결해 각각 접속되는지 확인한다.
 
 ### 2. 포트 매핑이 필요한 이유
 - 컨테이너는 격리된 네트워크 안에서 실행되므로, 호스트(내 PC)에서 컨테이너 내부 포트에 바로 접근할 수 없다.
@@ -545,8 +545,8 @@ $ docker logs --tail 5 my-nginx
 
 | 컨테이너 | 이미지 | 포트 매핑 | 실행 단계 |
 |---|---|---|---|
-| `my-nginx` | `my-custom-nginx:1.0` | `8080:80` | STEP 7 |
-| `my-nginx-8081` | `my-custom-nginx:1.0` | `8081:80` | STEP 8 |
+| `my-nginx` | `my-custom-nginx:1.0` | `8080:80` | STEP 5 |
+| `my-nginx-8081` | `my-custom-nginx:1.0` | `8081:80` | STEP 6 |
 
 ```bash
 $ docker run -d --name my-nginx-8081 -p 8081:80 my-custom-nginx:1.0
@@ -559,14 +559,14 @@ c9dd7ff84780   my-custom-nginx:1.0   "/docker-entrypoint.…"   13 hours ago    
 ```
 - `-d`: 백그라운드 실행 / `--name`: 컨테이너 이름 / `-p 8081:80`: 호스트 8081 → 컨테이너 80
 - 두 컨테이너 모두 IMAGE가 `my-custom-nginx:1.0`이고 `Up` 상태 (같은 이미지로 컨테이너 여러 개 실행 가능)
-- 옵션 순서(`-p`, `--name`)는 이미지 이름 앞에만 있으면 바꿔도 동일하게 동작함을 확인 (STEP 7은 `-p` 먼저, STEP 8은 `--name` 먼저)
+- 옵션 순서(`-p`, `--name`)는 이미지 이름 앞에만 있으면 바꿔도 동일하게 동작함을 확인 (STEP 5는 `-p` 먼저, STEP 6은 `--name` 먼저)
 
 📷 (docker run, docker ps 캡처)
 
 ### 4. 접속 증거
 
-**① 8080 접속 (STEP 7에서 확인)**
-- curl, 브라우저(주소창 `localhost:8080`), 접속 로그는 STEP 7의 "7. 검증" 참고
+**① 8080 접속 (STEP 5에서 확인)**
+- curl, 브라우저(주소창 `localhost:8080`), 접속 로그는 STEP 5의 "7. 검증" 참고
 
 **② 8081 curl 응답**
 ```bash
@@ -707,9 +707,9 @@ $ docker exec vol-test2 bash -c "cat /data/hello.txt"
 ### 2. 개념
 - **바인드 마운트(Bind Mount)**: 호스트의 특정 경로를 컨테이너 안의 경로에 그대로 연결하는 방식. 같은 파일을 호스트와 컨테이너가 함께 본다.
 - `-v 호스트절대경로:컨테이너경로` 형식으로 연결한다.
-- STEP 7의 `COPY`는 **빌드할 때 한 번 복사**하는 방식이라 내용을 바꾸려면 이미지를 다시 빌드해야 하지만, 바인드 마운트는 **호스트 파일 변경이 즉시 반영**된다.
+- STEP 5의 `COPY`는 **빌드할 때 한 번 복사**하는 방식이라 내용을 바꾸려면 이미지를 다시 빌드해야 하지만, 바인드 마운트는 **호스트 파일 변경이 즉시 반영**된다.
 
-| 구분 | `COPY` (STEP 7) | 바인드 마운트 (STEP 10) |
+| 구분 | `COPY` (STEP 5) | 바인드 마운트 (STEP 8) |
 |---|---|---|
 | 파일 위치 | 이미지 안에 복사됨 | 호스트 폴더를 연결 |
 | 호스트에서 수정 시 | 반영 안 됨 (재빌드 필요) | 즉시 반영 |
@@ -777,7 +777,7 @@ $ curl http://localhost:8082
 ### 5. 정리 (이 단계에서 이해한 점)
 - 바인드 마운트는 호스트와 컨테이너가 같은 파일을 공유해서, 개발 중 코드를 고치면 바로 확인할 수 있다.
 - `COPY`는 이미지에 내용을 고정하는 방식이고, 바인드 마운트는 실행 시점에 호스트 파일을 연결하는 방식이다.
-- 볼륨(STEP 9)은 Docker가 관리하는 저장 공간이고, 바인드 마운트는 호스트의 경로를 직접 지정한다는 점이 다르다.
+- 볼륨(STEP 7)은 Docker가 관리하는 저장 공간이고, 바인드 마운트는 호스트의 경로를 직접 지정한다는 점이 다르다.
 
 -------------------------------------------------------------------------------------- 
 ## 📌 STEP 9.Git 설정 및 GitHub 연동  
@@ -837,7 +837,7 @@ $ docker compose version                              #Compose 설치 확인
 cat > docker-compose.yml << 'EOF'
 services:                                              #실행할 컨테이너(서비스)들을 적는 영역
   web:                                                 #서비스 이름 (직접 정함)
-    image: my-custom-nginx:1.0                         #사용할 이미지.(직접 빌드한 이미지, 7번에서 만든 것)
+    image: my-custom-nginx:1.0                         #사용할 이미지.(직접 빌드한 이미지, STEP 5에서 만든 것)
     container_name: compose-web                        #컨테이너 이름 (`docker run --name`에 해당)
     ports:
       - "8090:80"                                      #포트 매핑     (`docker run -p`에 해당)
@@ -909,7 +909,7 @@ docker ps -a
 
 | 서비스 | 이미지 | 역할 | 호스트 포트 |
 |---|---|---|---|
-| `web` | `my-custom-nginx:1.0` | 웹 서버 (STEP 6에서 만든 이미지) | `8091:80` |
+| `web` | `my-custom-nginx:1.0` | 웹 서버 (STEP 5에서 만든 이미지) | `8091:80` |
 | `helper` | `alpine` | 보조 서비스. `web`에 요청을 보내 통신을 확인하는 역할 | 없음 |
 
 ### 3. 작업 폴더 및 docker-compose.yml 작성
@@ -1043,7 +1043,7 @@ $ curl http://localhost:8091
 | `WEB_PORT` (호스트 포트) | `8092` | `8093` |
 | `APP_ENV` (모드) | `dev` | `prod` |
 
-- 사용 이미지: `my-custom-nginx:1.0` (STEP 6에서 빌드, Dockerfile에 `ENV APP_ENV=dev` 포함)
+- 사용 이미지: `my-custom-nginx:1.0` (STEP 5에서 빌드, Dockerfile에 `ENV APP_ENV=dev` 포함)
 - NGINX는 `APP_ENV`를 읽어 동작을 바꾸지 않는다. `APP_ENV`는 **값이 컨테이너에 주입되는 것**을 확인하는 용도이고, 실제 동작이 달라지는 것은 포트이다.
 
 ### 4. 작업 폴더와 파일 작성
