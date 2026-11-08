@@ -334,7 +334,7 @@ docker run -it ubuntu
 - `-it`를 함께 쓰면 컨테이너 안에서 직접 명령을 입력할 수 있음
 
 > docker run -it ubuntu , echo "hollo container", echo ls 실행 화면
- <img height="250" alt="image" src="https://github.com/user-attachments/assets/48b771d3-c38a-4d78-b3cc-d9f7a480fa68" />
+ <img height="150" alt="image" src="https://github.com/user-attachments/assets/48b771d3-c38a-4d78-b3cc-d9f7a480fa68" />
  
 > 종료는 `exit` 입력 (컨테이너도 함께 정지됨)  
 ---
@@ -361,7 +361,7 @@ docker run -it ubuntu
       - `-d`: 백그라운드(detached) 실행
 ```
 > attach, exec 실행 화면
-<img width="998" height="350" alt="image" src="https://github.com/user-attachments/assets/a562bc4e-5202-4d6f-a655-103a21fdbac0" />
+<img width="998" height="200" alt="image" src="https://github.com/user-attachments/assets/a562bc4e-5202-4d6f-a655-103a21fdbac0" />
 
 
 
@@ -392,7 +392,7 @@ $ pwd                                        # 현재 위치 확인
 /home/user/codyssey/docker-custom
 ```
 > 작업 폴더 생성
-<img width="992" height="97" alt="image" src="https://github.com/user-attachments/assets/dd77b31c-48a2-474c-a0b9-77091d64b72d" />
+<img width="992" height="50" alt="image" src="https://github.com/user-attachments/assets/dd77b31c-48a2-474c-a0b9-77091d64b72d" />
 
 **site/index.html**
 ```bash
@@ -425,7 +425,7 @@ EOF
 ```
 
 > Dockerfile 만들기  
-<img width="882" height="235" alt="image" src="https://github.com/user-attachments/assets/7929e6e4-e8c4-45f4-abfd-ead8bfc70fdd" />
+<img width="882" height="150" alt="image" src="https://github.com/user-attachments/assets/7929e6e4-e8c4-45f4-abfd-ead8bfc70fdd" />
 
 
 #### 4. 커스텀 포인트와 목적
@@ -447,14 +447,14 @@ $ docker build -t my-custom-nginx:1.0 .
 
 > docker build 출력 화면
 
-<img width="1013" height="350" alt="image" src="https://github.com/user-attachments/assets/227b4cca-2f30-4115-9997-342c49a11867" />
+<img width="1013" height="150" alt="image" src="https://github.com/user-attachments/assets/227b4cca-2f30-4115-9997-342c49a11867" />
 
 
 ```bash
 $ docker images
 ```
 > docker images 실행 화면  
-<img width="1456" height="191" alt="image" src="https://github.com/user-attachments/assets/befaf287-0ef3-4749-85f6-f720ac378526" />
+<img width="1456" height="100" alt="image" src="https://github.com/user-attachments/assets/befaf287-0ef3-4749-85f6-f720ac378526" />
 
 
 #### 6. 컨테이너 실행
@@ -467,7 +467,7 @@ c9dd7ff84780   my-custom-nginx:1.0   Up About a minute   0.0.0.0:8080->80/tcp, [
 - `-d`: 백그라운드 실행 / `-p 8080:80`: 호스트 8080 → 컨테이너 80 / `--name`: 컨테이너 이름
 
 > docker run, docker ps 실행 화면  
-<img width="1622" height="218" alt="image" src="https://github.com/user-attachments/assets/f76ea94c-a54b-48c4-9c02-a96221988576" />
+<img width="1622" height="150" alt="image" src="https://github.com/user-attachments/assets/f76ea94c-a54b-48c4-9c02-a96221988576" />
 
 
 #### 7. 검증 (접속 · 환경변수 · 로그)
@@ -485,7 +485,7 @@ $ docker exec my-nginx env | grep APP_ENV
 APP_ENV=dev
 ```
 > 환경변수 실행 화면 
-<img width="1058" height="51" alt="image" src="https://github.com/user-attachments/assets/fa781323-459b-4de0-8c78-dbab0bff779b" />
+<img width="1058" height="30" alt="image" src="https://github.com/user-attachments/assets/fa781323-459b-4de0-8c78-dbab0bff779b" />
 
 **접속 로그 확인**
 ```bash
@@ -771,7 +771,8 @@ $ curl http://localhost:8082
 ### Git과 GitHub의 역할 차이
 
 > git config --list 출력 화면 
-<img height="350" alt="image" src="https://github.com/user-attachments/assets/9b8c5a35-fd8a-46d2-9614-66bc426a300e" />
+
+<img height="200" alt="image" src="https://github.com/user-attachments/assets/9b8c5a35-fd8a-46d2-9614-66bc426a300e" />
 
 | 구분 | Git | GitHub |
 |---|---|---|
@@ -830,7 +831,7 @@ EOF
 cat docker-compose.yml
 ```
 > docker-compose.yml 작성 캡쳐 화면
-<img width="800" height="200" alt="image" src="https://github.com/user-attachments/assets/014f7501-dcc7-4cc2-bafb-f3a8e8ff8cdf" />
+<img width="800" height="150" alt="image" src="https://github.com/user-attachments/assets/014f7501-dcc7-4cc2-bafb-f3a8e8ff8cdf" />
 
 
 ### Docker Compose 실행 및 확인
@@ -847,7 +848,7 @@ docker ps -a
 
 | WSL | 브라우저 |
 |---|---|
-| <img width="900" height="207" alt="image" src="https://github.com/user-attachments/assets/2377c52a-2264-4e11-b971-a00e3c97f827" /> | <img width="631" height="216" alt="image" src="https://github.com/user-attachments/assets/1b95fd9f-0ec8-4d00-bcb2-0966070ad3b7" /> | 
+| <img width="900" height="100" alt="image" src="https://github.com/user-attachments/assets/2377c52a-2264-4e11-b971-a00e3c97f827" /> | <img width="631" height="100" alt="image" src="https://github.com/user-attachments/assets/1b95fd9f-0ec8-4d00-bcb2-0966070ad3b7" /> | 
 
 
 ### 배운 점: 컨테이너 실행 명령이 "문서화된 실행 설정"으로 바뀌는 이유
@@ -918,7 +919,7 @@ $ cat docker-compose.yml
 ```
 
 > docker-compose.yml 화면 캡쳐
-<img width="800" height="350" alt="image" src="https://github.com/user-attachments/assets/d5dbc85b-c39e-4f61-988b-206f5975d4ed" />
+<img width="800" height="200" alt="image" src="https://github.com/user-attachments/assets/d5dbc85b-c39e-4f61-988b-206f5975d4ed" />
 
 ### 4. 실행
 
@@ -950,7 +951,7 @@ $ docker compose exec helper ping -c 2 web
 | wget 실행 화면 캡처 | ping 실행 화면 캡처 | 
 |---|---|
 | **`helper` → `web` HTTP 요청** | **`helper` → `web` 이름 확인 (ping)** |
-| <img width="1166" height="212" alt="image" src="https://github.com/user-attachments/assets/c8739ab6-5964-4517-bef9-c70e05e8b755" />| <img width="1073" height="192" alt="image" src="https://github.com/user-attachments/assets/7ef9c7b2-f59f-4aec-a27f-338f883f50a3" />| 
+| <img width="1166" height="120" alt="image" src="https://github.com/user-attachments/assets/c8739ab6-5964-4517-bef9-c70e05e8b755" />| <img width="1073" height="120" alt="image" src="https://github.com/user-attachments/assets/7ef9c7b2-f59f-4aec-a27f-338f883f50a3" />| 
 
 
 ** 호스트(내 PC)에서 접속**
@@ -960,7 +961,7 @@ $ curl http://localhost:8091
 
 | wsl 화면 실행 화면 캡처 | 브라우저 실행 화면 캡처 | 
 |---|---| 
-| <img width="600" height="212" alt="image" src="https://github.com/user-attachments/assets/359bd3a2-666d-4f21-a676-222d653212cb" /> | <img width="500" height="258" alt="image" src="https://github.com/user-attachments/assets/b73c946d-3d4f-4807-acea-ebe6917cfe50" /> | 
+| <img width="600" height="100" alt="image" src="https://github.com/user-attachments/assets/359bd3a2-666d-4f21-a676-222d653212cb" /> | <img width="500" height="100" alt="image" src="https://github.com/user-attachments/assets/b73c946d-3d4f-4807-acea-ebe6917cfe50" /> | 
 
 
 ### 6. 배운 점: 네트워크와 서비스 디스커버리
@@ -989,7 +990,7 @@ $ curl http://localhost:8091
 | `docker compose logs [서비스]` | 서비스의 로그 확인 (`--tail N`: 마지막 N줄, `-f`: 실시간) |
 | `docker compose down` | 서비스(컨테이너)와 Compose가 만든 네트워크를 중지·삭제 |
 
-<img width="900" height="350" alt="image" src="https://github.com/user-attachments/assets/fb8caafd-a7f4-414e-a960-fca1c47698e5" />
+<img width="900" height="200" alt="image" src="https://github.com/user-attachments/assets/fb8caafd-a7f4-414e-a960-fca1c47698e5" />
 
 - 컨테이너가 `Up`인 것과 서비스가 실제로 응답하는 것은 별개라서, 상태(`ps`) → 원인(`logs`) → 실제 응답(`curl`)을 함께 확인한다.
 
