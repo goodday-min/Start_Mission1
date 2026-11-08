@@ -142,6 +142,14 @@ ls -l                    # [변경 후] 권한 확인
 ```
 
 📊 권한 변경 전/후 비교
+
+```bash     
+ls -l
+chmod 777 sample.txt     # 모두에게 rwx 부여
+ls -l sample.txt         # 확인
+chmod 700 sample_dir     # 소유자만 rwx, 나머지 권한 없음
+ls -l                    # 확인
+```
 | 대상 | 변경 전 | 변경 후 | 사용 명령 | --- | 
 |------|---------|---------|-----------| --- | 
 | sample.txt (파일) | rw-r--r-- (644) | rwxr--r-- (744) | `chmod 744 sample.txt` | <img width="687" height="136" alt="image" src="https://github.com/user-attachments/assets/b587d7dc-7eab-421f-a63a-58d599364685" /> | 
@@ -169,7 +177,8 @@ ls -l                    # [변경 후] 권한 확인
     sudo service docker start    #Docker 데몬 실행
     docker info                  #Docker 데몬 동작 확인
 ```
-> <img width="741" height="200" alt="image" src="https://github.com/user-attachments/assets/2cd84ae9-5107-4d24-b4ab-2f57e6d055e1" />
+> docker --version, docker info 출력 화면     
+<img width="741" height="150" alt="image" src="https://github.com/user-attachments/assets/2cd84ae9-5107-4d24-b4ab-2f57e6d055e1" />
 
 - docker --version : 클라이언트 버전만 간단히 확인
 - service docker start : Docker 데몬(백그라운드 서비스)을 실행하는 명령
@@ -304,7 +313,7 @@ ls -l                    # [변경 후] 권한 확인
 ```bash
 docker run hello-world
 ```
-> docker run hello-world 실행 화면  
+> docker run hello-world 실행 화면 (스크린샷)  
 <img height="300" alt="image" src="https://github.com/user-attachments/assets/2ed61b8f-c171-463e-8aaf-b557334af4b6" />  
 
 
@@ -445,15 +454,14 @@ $ docker build -t my-custom-nginx:1.0 .
 - `Using cache`: 같은 내용의 단계는 이전 빌드 결과를 재사용
 - 출력 맨 위에 legacy builder DEPRECATED 경고가 표시됨 (buildx 설치 안내). 빌드는 정상 성공.
 
-> docker build 출력 화면
-
+docker build 출력 화면 (스크린 샷)   
 <img width="1013" height="150" alt="image" src="https://github.com/user-attachments/assets/227b4cca-2f30-4115-9997-342c49a11867" />
 
 
 ```bash
 $ docker images
 ```
-> docker images 실행 화면  
+docker images 실행 화면(스크린 샷)   
 <img width="1456" height="100" alt="image" src="https://github.com/user-attachments/assets/befaf287-0ef3-4749-85f6-f720ac378526" />
 
 
@@ -610,6 +618,10 @@ $ echo "hello volume" > /data/test.txt
 ```
 <img width="1170" height="30" alt="image" src="https://github.com/user-attachments/assets/333b66e9-e0fa-4143-9d53-b80b2b5a86a6" />
 
+컨테이너 c1 의 데이터를 볼륨으로 이동한 후 확인 스크린 샷
+<img width="1080" height="123" alt="image" src="https://github.com/user-attachments/assets/164ccf93-19f1-41ea-8719-a3644f89ea46" />
+
+
 #### 3. 컨테이너 삭제 
 ```bash
 $ docker rm c1
@@ -622,9 +634,7 @@ docker run -it --name c2 -v myvol:/data ubuntu bash
 cat /data/test.txt   # "hello volume" 출력되면 성공!
 ```
 - 삭제된 컨테이너에서 저장한 `hello.txt`가 새 컨테이너에서도 읽힘 → **데이터 영속성 확인**
-
-<img width="1171" height="72" alt="image" src="https://github.com/user-attachments/assets/c20be40f-c780-4481-9111-ed852c77bc47" />
-
+<img width="1080" height="92" alt="image" src="https://github.com/user-attachments/assets/d3c4dc0a-45c4-4b31-816b-744ee0b75988" />
 
 #### 5. 삭제 전/후 비교
 
@@ -723,7 +733,7 @@ $ curl http://localhost:8082
 
 ### Git과 GitHub의 역할 차이
 
-> git config --list 출력 화면 
+git config 출력 화면 (스크린 샷)  
 
 <img height="200" alt="image" src="https://github.com/user-attachments/assets/9b8c5a35-fd8a-46d2-9614-66bc426a300e" />
 
