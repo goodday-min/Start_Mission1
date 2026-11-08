@@ -32,8 +32,6 @@
 - [x] Git 설정 + VSCode GitHub 연동 (STEP 9)
 - [x] 보너스과제
 
-체크 표시는 지금까지 근거가 있는 항목만 했어요. STEP 7은 8081 브라우저 캡처가 아직 없어서 캡처 후에 확정할 예정.
-
 --------------------------------------------------------------------------------------  
 ## 📌 STEP 1. 리눅스 CLI     
 -------------------------------------------------------------------------------------- 
@@ -45,7 +43,7 @@
         echo $SHELL            # 셸 종류 
         pwd                    # 현재 위치
   
-<img width="1456" height="482" alt="image" src="https://github.com/user-attachments/assets/40b6e7f6-8708-41a1-a132-4df90b8f3277" />
+<img width="1200" height="350" alt="image" src="https://github.com/user-attachments/assets/40b6e7f6-8708-41a1-a132-4df90b8f3277" />
 
 
 ### 주요 명령어 요약
@@ -63,7 +61,7 @@
 | `mv` | move | 이동 또는 이름 변경 (`mv 원본 대상`) |
 | `rm` | remove | 파일 삭제 (`rm -r` 폴더 삭제) |
 
-<img width="1217" height="350" alt="image" src="https://github.com/user-attachments/assets/f8dd91c0-7eca-4603-a7dc-96d7dfd46eb9" />
+<img width="1200" height="350" alt="image" src="https://github.com/user-attachments/assets/f8dd91c0-7eca-4603-a7dc-96d7dfd46eb9" />
 
 💡 자주 쓰는 옵션 추가 설명  
 | 명령어 | 설명 | 
@@ -83,15 +81,14 @@
 | **가상머신 (VM)** | VirtualBox 등에 우분투 설치 | 이미 설치했다면 실행 |
 | **실제 리눅스 PC** | Ubuntu 등 설치된 컴퓨터 | 바로 터미널 열기 |
 
-🪟 새로운 용어 정리    
-WSL이란? 윈도우 안에서 리눅스를 실행할 수 있게 해주는 기능  
-셸(Shell)이란? 사용자의 명령을 해석해서 운영체제에 전달하는 프로그램    
-커널(Kernel)이란?  운영체제의 핵심(중심부) - uname -a에서 봤던 Linux 6.18...이 바로 커널 버전  
+> 용어 정리    
+.WSL이란? 윈도우 안에서 리눅스를 실행할 수 있게 해주는 기능  
+.셸(Shell)이란? 사용자의 명령을 해석해서 운영체제에 전달하는 프로그램    
+.커널(Kernel)이란?  운영체제의 핵심(중심부) - uname -a에서 봤던 Linux 6.18...이 바로 커널 버전  
 
 --------------------------------------------------------------------------------------    
 ## 📌 STEP 2. 파일 경로 및 권한 설정
 --------------------------------------------------------------------------------------
- 
 
 ###  절대 경로와 상대 경로
 
@@ -101,7 +98,8 @@ WSL이란? 윈도우 안에서 리눅스를 실행할 수 있게 해주는 기�
 | 상대 경로 | 현재 위치를 기준으로 한 경로 | 현재 위치가 `~/codyssey/docker-custom`일 때 `site/index.html` |
 | `~` | 홈 디렉토리(`/home/user`)의 단축 표기 | `cd ~` → `pwd`: `/home/user` |
 
-- **언제 무엇을 쓰나**: 위치가 바뀌어도 항상 같은 곳을 가리켜야 하면 절대 경로(예: 스크립트, 바인드 마운트의 `-v` 호스트 경로), 같은 폴더 안에서 가깝게 작업할 때는 상대 경로가 간단하다.
+- **언제 무엇을 쓰나**: 위치가 바뀌어도 항상 같은 곳을 가리켜야 하면 절대 경로(예: 스크립트, 바인드 마운트의 `-v` 호스트 경로), 
+  같은 폴더 안에서 가깝게 작업할 때는 상대 경로가 간단하다.
 - 바인드 마운트(STEP 8)에서 `$(pwd)/site`로 절대 경로를 만들어 쓴 이유다.
 
 
@@ -166,8 +164,7 @@ ls -l                    # [변경 후] 권한 확인
  
 ```bash               
     sudo apt update              # 패키지 목록 최신화 (관리자 권한으로, 설치 가능한 패키지 목록을 최신으로 갱신) 
-    sudo apt install docker.io   # Docker 설치
-
+    sudo apt install docker.io   # Docker 설치.
     docker --version             #Docker 버전 확인
     sudo service docker start    #Docker 데몬 실행
     docker info                  #Docker 데몬 동작 확인
@@ -180,8 +177,8 @@ ls -l                    # [변경 후] 권한 확인
 - docker info : 클라이언트/서버 버전, 플러그인, 컨테이너 수 등 상세 정보 확인
 
 * 새로운 용어 정리  
-sudo ( Super User DO ) : 잠깐 관리자(root) 권한을 빌려서 명령을 실행할 때 사용.  
-apt ( Advanced Package Tool ) : Ubuntu / Debian 계열 리눅스에서 쓰는 패키지 관리 도구, 프로그램을 설치·삭제·업데이트할 때 사용합니다.
+.sudo ( Super User DO ) : 잠깐 관리자(root) 권한을 빌려서 명령을 실행할 때 사용.  
+.apt ( Advanced Package Tool ) : Ubuntu / Debian 계열 리눅스에서 쓰는 패키지 관리 도구, 프로그램을 설치·삭제·업데이트할 때 사용합니다.
 
 
 ### 🔍 Docker 핵심 개념 정리 ###
@@ -221,24 +218,16 @@ apt ( Advanced Package Tool ) : Ubuntu / Debian 계열 리눅스에서 쓰는 �
     - `pull`: 레지스트리(기본 Docker Hub)에서 이미지를 받아옵니다.
     - `nginx:latest`: `이미지명:태그` 형식. 태그 생략 시 `latest`.
 ```
-출력 예시:
-```
-      REPOSITORY   TAG       IMAGE ID       CREATED       SIZE
-      nginx        latest    xxxxxxxxxxxx   2 weeks ago   187MB
-      
-      - **IMAGE ID**: 이미지 고유 식별자
-      - **SIZE**: 이미지 용량
-```
 
 > 이미지 다운 및 목록 확인 출력화면
 
-><img width="1447" height="573" alt="image" src="https://github.com/user-attachments/assets/ad06e420-7a1d-4874-bef7-204a0c48b46c" />   
+><img width="1200" height="400" alt="image" src="https://github.com/user-attachments/assets/ad06e420-7a1d-4874-bef7-204a0c48b46c" />   
 
 
 #### 🔍 트러블슈팅 1: docker pull 시 권한 오류
 *** 처음 docker pull nginx:latest 실행했을 때 권한 오류 발생 함.
-- **문제**: `docker pull nginx:latest` 실행 시 아래 오류 발생
-  permission denied while trying to connect to the docker API at unix:///var/run/docker.sock
+- **문제**: `docker pull nginx:latest` 실행 시 아래 오류 발생  
+          permission denied while trying to connect to the docker API at unix:///var/run/docker.sock
 - **원인 가설**: 현재 사용자가 `docker` 그룹에 속하지 않아 docker.sock 접근이 거부됨
 - **확인**: `groups` 또는 `id` 출력에 `docker`가 없음을 확인
 - **해결**:
@@ -263,10 +252,10 @@ apt ( Advanced Package Tool ) : Ubuntu / Debian 계열 리눅스에서 쓰는 �
 
 >  docker 실행, 중지, 목록, 삭제 실행 화면  
 
-<img width="1450" height="167" alt="image" src="https://github.com/user-attachments/assets/d486bc89-7366-4ec6-8483-0af9ce2571b2" />  
+<img width="1200" height="120" alt="image" src="https://github.com/user-attachments/assets/d486bc89-7366-4ec6-8483-0af9ce2571b2" />  
 
 
-<img width="1448" height="256" alt="image" src="https://github.com/user-attachments/assets/f4d1373d-affe-492f-834d-2232beeeca20" />  
+<img width="1200" height="200" alt="image" src="https://github.com/user-attachments/assets/f4d1373d-affe-492f-834d-2232beeeca20" />  
 
 
 
@@ -280,7 +269,7 @@ apt ( Advanced Package Tool ) : Ubuntu / Debian 계열 리눅스에서 쓰는 �
 ```
 > docker logs web 실행 화면
 
-> <img width="1172" height="350" alt="image" src="https://github.com/user-attachments/assets/50cd31ed-dd25-4116-81d3-d1801aad2dae" />
+> <img width="1100" height="200" alt="image" src="https://github.com/user-attachments/assets/50cd31ed-dd25-4116-81d3-d1801aad2dae" />
 
 ```bash  
       docker stats                #리소스 사용량 확인
@@ -294,13 +283,13 @@ apt ( Advanced Package Tool ) : Ubuntu / Debian 계열 리눅스에서 쓰는 �
 
 🪟 전체 흐름 한눈에 보기
 ```
-docker pull   →  이미지 다운로드
-docker images →  이미지 목록 확인
-docker run    →  이미지로 컨테이너 생성·실행
-docker ps     →  실행 중 컨테이너 확인
-docker logs   →  동작 로그 확인
-docker stats  →  리소스 사용량 확인
-docker stop   →  컨테이너 중지
+  docker pull   →  이미지 다운로드
+  docker images →  이미지 목록 확인
+  docker run    →  이미지로 컨테이너 생성·실행
+  docker ps     →  실행 중 컨테이너 확인
+  docker logs   →  동작 로그 확인
+  docker stats  →  리소스 사용량 확인
+  docker stop   →  컨테이너 중지
 
 ```
 
@@ -316,7 +305,7 @@ docker stop   →  컨테이너 중지
 docker run hello-world
 ```
 > docker run hello-world 실행 화면  
-><img height="300" alt="image" src="https://github.com/user-attachments/assets/2ed61b8f-c171-463e-8aaf-b557334af4b6" />  
+<img height="300" alt="image" src="https://github.com/user-attachments/assets/2ed61b8f-c171-463e-8aaf-b557334af4b6" />  
 
 
 💡**Docker 동작 과정** : client → daemon → 이미지 pull → 컨테이너 생성 → 출력 전달   
@@ -372,7 +361,7 @@ docker run -it ubuntu
       - `-d`: 백그라운드(detached) 실행
 ```
 > attach, exec 실행 화면
-<img width="998" height="377" alt="image" src="https://github.com/user-attachments/assets/a562bc4e-5202-4d6f-a655-103a21fdbac0" />
+<img width="998" height="350" alt="image" src="https://github.com/user-attachments/assets/a562bc4e-5202-4d6f-a655-103a21fdbac0" />
 
 
 
@@ -456,9 +445,9 @@ $ docker build -t my-custom-nginx:1.0 .
 - `Using cache`: 같은 내용의 단계는 이전 빌드 결과를 재사용
 - 출력 맨 위에 legacy builder DEPRECATED 경고가 표시됨 (buildx 설치 안내). 빌드는 정상 성공.
 
-> docker build 출력 캡처
+> docker build 출력 화면
 
-<img width="1013" height="450" alt="image" src="https://github.com/user-attachments/assets/227b4cca-2f30-4115-9997-342c49a11867" />
+<img width="1013" height="350" alt="image" src="https://github.com/user-attachments/assets/227b4cca-2f30-4115-9997-342c49a11867" />
 
 
 ```bash
@@ -483,18 +472,14 @@ c9dd7ff84780   my-custom-nginx:1.0   Up About a minute   0.0.0.0:8080->80/tcp, [
 
 #### 7. 검증 (접속 · 환경변수 · 로그)
 
-**① curl 응답**
-```bash
-$ curl http://localhost:8080
-```
-> curl 실행 화면
-<img width="887" height="217" alt="image" src="https://github.com/user-attachments/assets/49a0ca0b-602e-44de-86a8-553f677b2fba" />
+> curl 실행 화면 과 브라우저 실행 화면  
 
-**② 브라우저 접속** (주소창 `localhost:8080` + 응답 화면)
-<img width="673" height="213" alt="image" src="https://github.com/user-attachments/assets/bc059b5b-9b2c-417a-8c22-982384feecf8" />
+|curl 실행 화면 | 브라우저 접속(주소창 `localhost:8080` + 응답 화면) |
+| --- | --- |
+|<img width="887" height="217" alt="image" src="https://github.com/user-attachments/assets/49a0ca0b-602e-44de-86a8-553f677b2fba" /> | <img width="673" height="213" alt="image" src="https://github.com/user-attachments/assets/bc059b5b-9b2c-417a-8c22-982384feecf8" />|
 
 
-**③ 환경변수 적용 확인**
+**환경변수 적용 확인**
 ```bash
 $ docker exec my-nginx env | grep APP_ENV
 APP_ENV=dev
@@ -502,7 +487,7 @@ APP_ENV=dev
 > 환경변수 실행 화면 
 <img width="1058" height="51" alt="image" src="https://github.com/user-attachments/assets/fa781323-459b-4de0-8c78-dbab0bff779b" />
 
-**④ 접속 로그 확인**
+**접속 로그 확인**
 ```bash
 $ docker logs --tail 5 my-nginx
 ```
