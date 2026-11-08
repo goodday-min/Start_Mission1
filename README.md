@@ -899,7 +899,7 @@ services:
     container_name: multi-web
     ports:
       - "8091:80"
-  helper:                                       #서비스 이름. 같은 네트워크에서 **컨테이너끼리 서로를 부르는 주소**가 됨
+  helper:                                       #서비스 이름. 
     image: alpine
     container_name: multi-helper
     command: sleep infinity
@@ -970,11 +970,24 @@ $ curl http://localhost:8091
 - **한 파일로 여러 서비스를 관리한다**: 보너스 1의 단일 서비스에서 `services` 아래에 서비스를 추가하는 것만으로 멀티 컨테이너 구성이 되고, `up`/`down` 한 번으로 모두 함께 실행·종료된다.
 
 
+--------------------------------------------------------------------------------------
+## 📌 보너스 3. Compose 운영 명령어 습득
+--------------------------------------------------------------------------------------
 
 
 
+<img width="921" height="261" alt="image" src="https://github.com/user-attachments/assets/bee999dd-4263-4f06-aaf1-7935f50bb746" />
 
 
+
+<img width="1720" height="856" alt="image" src="https://github.com/user-attachments/assets/37a49945-01ab-44bd-804f-0bbeecc060d5" />
+
+
+<img width="1742" height="561" alt="image" src="https://github.com/user-attachments/assets/fb8caafd-a7f4-414e-a960-fca1c47698e5" />
+
+--------------------------------------------------------------------------------------
+## 📌 보너스 3. Compose 운영 명령어 습득
+--------------------------------------------------------------------------------------
 
 
 
