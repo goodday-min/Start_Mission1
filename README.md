@@ -908,7 +908,7 @@ $ cat docker-compose.yml
 ```
 
 > docker-compose.yml 화면 캡쳐
-<img width="973" height="542" alt="image" src="https://github.com/user-attachments/assets/d5dbc85b-c39e-4f61-988b-206f5975d4ed" />
+<img width="800" height="350" alt="image" src="https://github.com/user-attachments/assets/d5dbc85b-c39e-4f61-988b-206f5975d4ed" />
 
 ### 4. 실행
 
@@ -916,8 +916,9 @@ $ cat docker-compose.yml
 $ docker compose up -d                        #실행
 $ docker compose ps
 
-<img width="1821" height="332" alt="image" src="https://github.com/user-attachments/assets/73a58e60-96ad-4cc1-a55c-caa0a047daab" />
 ```
+![alt text](image.png)
+
 - 서비스 2개가 한 번에 실행됨
 - Compose가 이 프로젝트 전용 네트워크를 자동으로 생성하고, 같은 네트워크의 서비스는 **서비스 이름**으로 서로를 찾을 수 있음
 
@@ -938,32 +939,21 @@ $ docker compose exec helper ping -c 2 web
   
 | wget 실행 화면 캡처 | ping 실행 화면 캡처 | 
 |---|---|
-| **① `helper` → `web` HTTP 요청** | **`helper` → `web` 이름 확인 (ping)** |
+| **`helper` → `web` HTTP 요청** | **`helper` → `web` 이름 확인 (ping)** |
 | <img width="1166" height="212" alt="image" src="https://github.com/user-attachments/assets/c8739ab6-5964-4517-bef9-c70e05e8b755" />| <img width="1073" height="192" alt="image" src="https://github.com/user-attachments/assets/7ef9c7b2-f59f-4aec-a27f-338f883f50a3" />| 
 
 
-**④ 호스트(내 PC)에서 접속**
+** 호스트(내 PC)에서 접속**
 ```bash
 $ curl http://localhost:8091
 ```
 
-| curl http://localhost:8091 화면 캡처 | 브라우저 캡처 | 
-|---|---|
-| <img width="901" height="212" alt="image" src="https://github.com/user-attachments/assets/359bd3a2-666d-4f21-a676-222d653212cb" />
-| <img width="633" height="258" alt="image" src="https://github.com/user-attachments/assets/b73c946d-3d4f-4807-acea-ebe6917cfe50" />| 
+| wsl 화면 실행 화면 캡처 | 브라우저 실행 화면 캡처 | 
+|---|---| 
+| <img width="600" height="212" alt="image" src="https://github.com/user-attachments/assets/359bd3a2-666d-4f21-a676-222d653212cb" /> | <img width="500" height="258" alt="image" src="https://github.com/user-attachments/assets/b73c946d-3d4f-4807-acea-ebe6917cfe50" /> | 
 
 
-### 6. 검증 요약
-
-| 검증 항목 | 명령 | 결과 |
-|---|---|---|
-| 서비스 2개 동시 실행 | `docker compose up -d`, `ps` | `multi-web`, `multi-helper` Up |
-| 서비스 이름으로 통신 | `exec helper wget -qO- http://web` | `web`의 HTML 응답 |
-| 서비스 이름 해석 | `exec helper ping -c 2 web` | `web` → `172.18.0.2`, 손실 0% |
-| 요청 도달 | `compose logs web` | `GET / ... 200`, User-Agent `Wget` |
-| 호스트 접속 | `curl`, 브라우저 | `localhost:8091`에서 커스텀 HTML 응답 |
-
-### 7. 배운 점: 네트워크와 서비스 디스커버리
+### 6. 배운 점: 네트워크와 서비스 디스커버리
 - **서비스 이름이 주소가 된다**: 같은 Compose 네트워크 안에서는 IP를 몰라도 `http://web`처럼 서비스 이름으로 상대 컨테이너를 찾을 수 있다. 컨테이너가 다시 만들어져 IP가 바뀌어도 이름은 그대로라서 설정이 단순해진다.
 - **컨테이너 간 통신은 컨테이너 포트를 쓴다**: 호스트 포트(8091)는 내 PC에서 접속할 때만 필요하고, 컨테이너끼리는 컨테이너 포트(80)로 직접 통신한다.
 - **호스트에 노출하는 범위를 선택할 수 있다**: `web`만 포트를 열고 `helper`는 열지 않았지만, 둘은 같은 네트워크 안에서 통신된다.
@@ -971,27 +961,153 @@ $ curl http://localhost:8091
 
 
 --------------------------------------------------------------------------------------
-## 📌 보너스 3. Compose 운영 명령어 습득
---------------------------------------------------------------------------------------
 
-
-
-<img width="921" height="261" alt="image" src="https://github.com/user-attachments/assets/bee999dd-4263-4f06-aaf1-7935f50bb746" />
-
-
-
-<img width="1720" height="856" alt="image" src="https://github.com/user-attachments/assets/37a49945-01ab-44bd-804f-0bbeecc060d5" />
-
-
-<img width="1742" height="561" alt="image" src="https://github.com/user-attachments/assets/fb8caafd-a7f4-414e-a960-fca1c47698e5" />
+## 📌 보너스 3. Compose 운영 명령어 — up / down / ps / logs
 
 --------------------------------------------------------------------------------------
-## 📌 보너스 3. Compose 운영 명령어 습득
+
+### 1. 목표
+- `up`, `down`, `ps`, `logs`로 서비스의 실행·종료·상태 확인·로그 확인을 관리한다.
+- 운영 관점의 "상태 확인 루틴"을 만든다.
+
+### 2. 사용한 명령어
+
+| 명령 | 역할 |
+|---|---|
+| `docker compose up -d` | yml에 정의된 서비스를 백그라운드로 실행 |
+| `docker compose ps` | 이 yml로 실행한 서비스의 상태 확인 |
+| `docker compose logs [서비스]` | 서비스의 로그 확인 (`--tail N`: 마지막 N줄, `-f`: 실시간) |
+| `docker compose down` | 서비스(컨테이너)와 Compose가 만든 네트워크를 중지·삭제 |
+
+<img width="900" height="350" alt="image" src="https://github.com/user-attachments/assets/fb8caafd-a7f4-414e-a960-fca1c47698e5" />
+
+- 컨테이너가 `Up`인 것과 서비스가 실제로 응답하는 것은 별개라서, 상태(`ps`) → 원인(`logs`) → 실제 응답(`curl`)을 함께 확인한다.
+
+
+### 배운 점: 운영 관점의 "상태 확인 루틴"
+
+| 순서 | 명령 | 알 수 있는 것 |
+|---|---|---|
+| ① | `docker compose ps` | **상태**: 서비스가 떠 있는지, 포트가 맞는지 |
+| ② | `docker compose logs` | **원인**: 에러나 접속 기록 등 무슨 일이 있었는지 |
+| ③ | `curl` | **실제 응답**: 서비스가 요청에 응답하는지 |
+
+- 문제가 생기면 위 순서로 좁혀 가면 어느 단계에서 이상이 생겼는지 알 수 있다.
+- `docker run` 중심 작업에서는 컨테이너마다 이름을 기억해 개별 명령을 입력해야 했지만, Compose는 같은 yml에 묶인 서비스들을 `ps`, `logs`, `down` 한 번으로 함께 관리한다.
+- `ps`는 기본으로 실행 중인 서비스만 보여주므로, 중지된 서비스까지 확인하려면 `-a`를 쓴다.
+
+
+
+--------------------------------------------------------------------------------------
+## 📌 보너스 5. 환경 변수 활용 — 설정과 코드의 분리
 --------------------------------------------------------------------------------------
 
+### 1. 목표
+- Compose에서 환경 변수를 주입해 서버 포트와 모드(`APP_ENV`)를 바꿔 본다.
+- 이미지와 `docker-compose.yml`은 그대로 두고 **설정 값만 바꿔서** 동작이 달라지는 것을 확인한다.
+
+### 2. 개념
+- **환경 변수**: 프로그램 밖에서 값을 전달하는 방법. 코드(yml, 이미지)를 고치지 않고 설정만 바꿀 수 있다.
+- **`.env` 파일**: 변수 값을 모아 둔 파일. Compose가 같은 폴더의 `.env`를 읽어 yml의 `${변수}`를 치환한다.
+- Dockerfile의 `ENV`는 이미지 안의 **기본값**이고, Compose의 `environment`로 **덮어쓸 수 있다.**
+
+### 3. 구성
+
+| 설정 | 변경 전 | 변경 후 |
+|---|---|---|
+| `WEB_PORT` (호스트 포트) | `8092` | `8093` |
+| `APP_ENV` (모드) | `dev` | `prod` |
+
+- 사용 이미지: `my-custom-nginx:1.0` (STEP 6에서 빌드, Dockerfile에 `ENV APP_ENV=dev` 포함)
+- NGINX는 `APP_ENV`를 읽어 동작을 바꾸지 않는다. `APP_ENV`는 **값이 컨테이너에 주입되는 것**을 확인하는 용도이고, 실제 동작이 달라지는 것은 포트이다.
+
+### 4. 작업 폴더와 파일 작성
+```bash
+$ cat > .env << 'EOF'
+WEB_PORT=8092
+APP_ENV=dev
+EOF
+$ cat .env
+
+$ cat > docker-compose.yml << 'EOF'
+services:
+  web:
+    image: my-custom-nginx:1.0
+    container_name: env-web
+    ports:
+      - "${WEB_PORT}:80"
+    environment:
+      - APP_ENV=${APP_ENV}
+EOF
+$ cat docker-compose.yml
+```
+![alt text](image-1.png)
+
+| yml 항목 | 의미 |
+|---|---|
+| `${WEB_PORT}` | `.env`의 `WEB_PORT` 값으로 치환 |
+| `environment:` | 컨테이너 안에 환경 변수를 주입 (`docker run -e`에 해당) |
+| `${APP_ENV}` | `.env`의 `APP_ENV` 값으로 치환 |
+
+### 5. 치환 결과 확인
+```bash
+$ docker compose config
+```
+![alt text](image-2.png)
+
+### 6. 변경 전 실행 (dev, 8092)
+```bash
+$ docker compose up -d
+$ docker compose ps
+$ curl http://localhost:8092
+$ docker compose exec web env | grep APP_ENV
+APP_ENV=dev
+```
+![alt text](image-3.png)
 
 
+### 7. `.env`만 수정해서 재실행 (prod, 8093)
+```bash
+$ sed -i 's/^WEB_PORT=.*/WEB_PORT=8093/; s/^APP_ENV=.*/APP_ENV=prod/' .env
+$ cat .env
+WEB_PORT=8093
+APP_ENV=prod
 
+$ docker compose up -d
+$ docker compose ps
+
+$ curl http://localhost:8093
+$ docker compose exec web env | grep APP_ENV
+APP_ENV=prod
+$ curl http://localhost:8092
+```
+
+![alt text](image-4.png)
+
+
+- `docker-compose.yml`과 이미지는 **수정하지 않고** `.env`의 두 줄만 바꿨다.
+- 포트가 `8092` → `8093`으로 바뀌어 `8093`은 응답하고 `8092`는 연결되지 않는다.
+- `APP_ENV`가 `dev` → `prod`로 바뀌었고, 이미지의 `ENV APP_ENV=dev`(기본값)를 Compose의 `environment`가 덮어썼다.
+
+|변경 전|변경 후|
+|---|---|
+|![alt text](image-5.png) | ![ |](image-6.png)
+
+### 8. 검증 요약
+
+| 검증 항목 | 명령 | 결과 |
+|---|---|---|
+| 변수 치환 | `docker compose config` | `.env` 값이 yml에 적용됨 |
+| 변경 전(dev, 8092) | `ps`, `curl`, `env` | `8092->80`, `APP_ENV=dev` |
+| 설정만 변경 | `sed -i ... .env`, `up -d` | yml·이미지 수정 없이 재실행 |
+| 변경 후(prod, 8093) | `ps`, `curl`, `env` | `8093->80`, HTML 응답, `APP_ENV=prod` |
+| 이전 포트 해제 | `curl http://localhost:8092` | 연결 실패 |
+
+### 11. 배운 점: 설정과 코드의 분리
+- **같은 이미지, 같은 yml로 설정만 바꿨다**: `.env`의 값만 수정해서 포트와 모드가 달라졌다. 코드를 고치거나 이미지를 다시 빌드할 필요가 없다.
+- **환경별 구성을 재사용할 수 있다**: 개발(dev)과 운영(prod)처럼 값만 다른 환경에서 같은 구성을 쓰고, 달라지는 값만 `.env`로 분리하면 된다.
+- **값의 우선순위**: 이미지(Dockerfile)의 `ENV`는 기본값이고, Compose의 `environment`가 이를 덮어쓴다.
+- **비밀 값 주의**: `.env`는 비밀번호나 토큰 같은 민감한 값을 두는 용도로도 쓰이므로, 실제 운영에서는 저장소에 올리지 않도록 관리한다. 이번 실습의 값은 민감하지 않은 예시 값이다.
 
 
 

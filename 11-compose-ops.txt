@@ -1,0 +1,36 @@
+$ docker compose up -d
+ Network compose-multi_default  Creating
+ Network compose-multi_default  Created
+ Container multi-web  Creating
+ Container multi-helper  Creating
+ Container multi-web  Created
+ Container multi-helper  Created
+ Container multi-web  Starting
+ Container multi-helper  Starting
+ Container multi-web  Started
+ Container multi-helper  Started
+$ docker compose ps
+NAME           IMAGE                 COMMAND                  SERVICE   CREATED         STATUS         PORTS
+multi-helper   alpine                "sleep infinity"         helper    3 seconds ago   Up 2 seconds   
+multi-web      my-custom-nginx:1.0   "/docker-entrypoint.…"   web       3 seconds ago   Up 2 seconds   0.0.0.0:8091->80/tcp, [::]:8091->80/tcp
+$ curl -s -o /dev/null -w "%{http_code}\n" http://localhost:8091
+200
+$ docker compose logs --tail 5 web
+multi-web  | 2026/11/08 02:06:27 [notice] 1#1: start worker process 38
+multi-web  | 2026/11/08 02:06:27 [notice] 1#1: start worker process 39
+multi-web  | 2026/11/08 02:06:27 [notice] 1#1: start worker process 40
+multi-web  | 2026/11/08 02:06:27 [notice] 1#1: start worker process 41
+multi-web  | 172.18.0.1 - - [08/Nov/2026:02:06:29 +0000] "GET / HTTP/1.1" 200 220 "-" "curl/8.18.0" "-"
+$ docker compose down
+ Container multi-helper  Stopping
+ Container multi-web  Stopping
+ Container multi-web  Stopped
+ Container multi-web  Removing
+ Container multi-web  Removed
+ Container multi-helper  Stopped
+ Container multi-helper  Removing
+ Container multi-helper  Removed
+ Network compose-multi_default  Removing
+ Network compose-multi_default  Removed
+$ docker compose ps
+NAME      IMAGE     COMMAND   SERVICE   CREATED   STATUS    PORTS
