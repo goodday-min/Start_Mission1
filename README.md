@@ -793,7 +793,29 @@ $ curl http://localhost:8082
 | 대표 명령 | `git add`, `git commit` | `git push`, `git pull`(원격과 주고받기) |
 
 
+### 트러블슈팅 2: git pull 시 추적 브랜치(upstream) 정보 없음
 
+- **문제**: `git pull` 실행 시 원격 저장소에서 객체는 받아왔지만, 병합 단계에서 아래 메시지가 나오며 중단됨
+  ```
+  From https://github.com/goodday-min/Start_Mission1
+     a502009..dce431e  main       -> origin/main
+  There is no tracking information for the current branch.
+  Please specify which branch you want to merge with.
+  ```
+- **원인 가설**  
+로컬 브랜치 이름은 `master`, 원격 브랜치 이름은 `main`으로 서로 달라서, 로컬 `master`에 연결된 원격 브랜치(upstream)가 설정되어 있지 않음. 그래서 `git pull`이 어느 브랜치와 병합할지 알 수 없음
+- **확인**:
+  - `git branch -a` → 로컬은 `* master`만 있고, 원격은 `remotes/origin/main`
+  - `git status` → 추적되지 않은 파일만 있고 변경된 파일은 없음을 확인 (병합해도 로컬 작업 손실 없음)
+  **해결**:
+  ```bash
+  git branch -m master main                      # 로컬 브랜치 이름을 main으로 변경
+  git branch --set-upstream-to=origin/main main  # main과 origin/main 연결
+  git pull                                       # 이후부터는 git pull만으로 동작
+  ```
+  **대안**: 이름을 바꾸지 않고 한 번만 브랜치를 지정해서 실행 → `git pull origin main` 
+
+![alt text](image.png)
 -------------------------------------------------------------------------------------- 
 ## 📌 보너스 1. Docker Compose 기초 — 단일 서비스 실행
 -------------------------------------------------------------------------------------- 
