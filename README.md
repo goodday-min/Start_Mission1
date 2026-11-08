@@ -20,17 +20,17 @@
 | 작업 경로 | 리눅스 홈 `~/codyssey/docker-custom` |
 
 ## 수행 체크리스트
-- [x] 터미널 기본 조작 (명령어 정리 / 실행 로그는 보완 예정)
+- [x] 터미널 기본 조작 (STEP 1)
 - [x] 권한 변경 실습 (STEP 2)
 - [x] Docker 설치/점검 (STEP 3)
 - [x] Docker 이미지/컨테이너/로그/리소스 확인 (STEP 4)
 - [x] hello-world, ubuntu 컨테이너 실행 (STEP 5)
 - [x] Dockerfile 빌드/실행 (STEP 6)
 - [x] 포트 매핑 접속 2회 (STEP 7)
-- [ ] 볼륨 영속성 (STEP 8, 실습 후 체크)
-- [ ] 바인드 마운트 반영 (STEP 9, 실습 후 체크)
-- [ ] Git 설정 + VSCode GitHub 연동 (집에서 진행)
-
+- [x] 볼륨 영속성 (STEP 8)
+- [x] 바인드 마운트 반영 (STEP 9)
+- [x] Git 설정 + VSCode GitHub 연동 
+- [x] 보너스과제
 
 체크 표시는 지금까지 근거가 있는 항목만 했어요. STEP 7은 8081 브라우저 캡처가 아직 없어서 캡처 후에 확정할 예정.
 
