@@ -507,7 +507,7 @@ $ docker logs --tail 5 my-nginx
 | 환경변수 적용 | `docker exec ... env` | `APP_ENV=dev` |
 | 요청 도달 | `docker logs` | `GET / ... 200` |
 
-### 9. 정리 (이 단계에서 이해한 점)
+#### 9. 정리 (이 단계에서 이해한 점)
 - **이미지**는 설계도(읽기 전용), **컨테이너**는 그것을 실행한 인스턴스이며 한 이미지로 여러 컨테이너를 만들 수 있다.
 - 컨테이너는 격리되어 있어 `-p` 포트 매핑을 해야 호스트에서 접근할 수 있다.
 - 기존 이미지 위에 `COPY`/`ENV`/`LABEL`을 얹는 것이 "커스텀 이미지" 제작이다.
@@ -535,54 +535,32 @@ $ docker logs --tail 5 my-nginx
 
 ```bash
 $ docker run -d --name my-nginx-8081 -p 8081:80 my-custom-nginx:1.0
-fdf2e3b4e3d846c350183c527daee2bb8a982f87be811baaf3ed6aa60166a0b1
 $ docker ps
-CONTAINER ID   IMAGE                 COMMAND                  CREATED          STATUS          PORTS                                         NAMES
-fdf2e3b4e3d8   my-custom-nginx:1.0   "/docker-entrypoint.…"   36 seconds ago   Up 35 seconds   0.0.0.0:8081->80/tcp, [::]:8081->80/tcp       my-nginx-8081
-c9dd7ff84780   my-custom-nginx:1.0   "/docker-entrypoint.…"   13 hours ago     Up 13 hours     0.0.0.0:8080->80/tcp, [::]:8080->80/tcp       my-nginx
-0c29a0946bfa   ubuntu                "/bin/bash"              14 hours ago     Up 14 hours                                                   test
 ```
-- `-d`: 백그라운드 실행 / `--name`: 컨테이너 이름 / `-p 8081:80`: 호스트 8081 → 컨테이너 80
-- 두 컨테이너 모두 IMAGE가 `my-custom-nginx:1.0`이고 `Up` 상태 (같은 이미지로 컨테이너 여러 개 실행 가능)
-- 옵션 순서(`-p`, `--name`)는 이미지 이름 앞에만 있으면 바꿔도 동일하게 동작함을 확인 (STEP 5는 `-p` 먼저, STEP 6은 `--name` 먼저)
-
-📷 (docker run, docker ps 캡처)
+> 
+![alt text](img/image-11.png)
 
 ### 4. 접속 증거
 
-**① 8080 접속 (STEP 5에서 확인)**
+**8080 접속 (STEP 5에서 확인)**
 - curl, 브라우저(주소창 `localhost:8080`), 접속 로그는 STEP 5의 "7. 검증" 참고
 
-**② 8081 curl 응답**
-```bash
-$ curl http://localhost:8081
-<!DOCTYPE html>
-<html lang="ko">
-<head><meta charset="UTF-8"><title>My Custom Nginx</title></head>
-<body>
-  <h1>Hello from my custom image!</h1>
-  <p>내가 만든 NGINX 커스텀 이미지입니다.</p>
-</body>
-</html>
-```
-📷 (curl 캡처)
 
-**③ 8081 브라우저 접속** (주소창 `localhost:8081` + 응답 화면)
-📷 (브라우저 캡처)
+**8081 접속 확인**   
+| 8081 curl 응답 화면 캡처 | 8081 브라우저 접속(주소창 `localhost:8081` + 응답 화면) | 
+|---|---| 
+| ![alt text](img/image_12.png) | ![alt text](img/image_13.png) | 
 
-**④ 8081 접속 로그**
+
+
+**8081 접속 로그**
 ```bash
 $ docker logs --tail 5 my-nginx-8081
-2026/11/05 16:02:03 [notice] 1#1: start worker process 41
-172.17.0.1 - - [05/Nov/2026:16:03:05 +0000] "GET / HTTP/1.1" 200 220 "-" "curl/8.18.0" "-"
-172.17.0.1 - - [05/Nov/2026:16:03:59 +0000] "GET / HTTP/1.1" 200 220 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) ... Chrome/156.0.0.0 Safari/537.36" "-"
-172.17.0.1 - - [05/Nov/2026:16:03:59 +0000] "GET /favicon.ico HTTP/1.1" 404 555 "http://localhost:8081/" "Mozilla/5.0 ... Chrome/156.0.0.0 Safari/537.36" "-"
-2026/11/05 16:03:59 [error] 31#31: *2 open() "/usr/share/nginx/html/favicon.ico" failed (2: No such file or directory), client: 172.17.0.1, server: localhost, request: "GET /favicon.ico HTTP/1.1", host: "localhost:8081", referrer: "http://localhost:8081/"
 ```
 - curl과 Chrome의 `GET /` 요청이 모두 `200`으로 8081 컨테이너에 도달함 (로그 시각은 UTC)
 - `favicon.ico 404`는 브라우저가 탭 아이콘을 자동으로 요청했으나 `site/`에 해당 파일이 없어서 발생한 것으로, 페이지 응답(`200`)에는 영향이 없다.
 
-📷 (docker logs 캡처)
+![alt text](img/image_14.png)
 
 ### 5. 검증 요약
 
@@ -622,7 +600,6 @@ $ docker ps -a
 $ docker volume create mydata       #볼륨 생성
 $ docker volume ls
 ```
-📷 (볼륨 생성/목록 캡처)
 
 #### 2. 볼륨 연결 + 데이터 저장
 ```bash
@@ -633,7 +610,7 @@ $ docker exec vol-test bash -c "echo hi > /data/hello.txt && cat /data/hello.txt
 - `sleep infinity`: ubuntu 컨테이너가 바로 종료되지 않도록 대기
 - `docker exec`: 실행 중인 컨테이너 안에서 명령 실행 (`/data/hello.txt`에 `hi` 저장 후 출력)
 
-📷 (docker run, docker exec 캡처)
+![alt text](img/image_15.png)
 
 #### 3. 컨테이너 삭제 (삭제 전/후 비교)
 ```bash
@@ -674,9 +651,6 @@ $ docker exec vol-test2 bash -c "cat /data/hello.txt"
 ### 5. 정리 (이 단계에서 이해한 점)
 - 컨테이너의 수명과 데이터의 수명은 분리할 수 있고, 그 수단이 볼륨이다.
 - 컨테이너는 언제든 삭제·재생성할 수 있는 "교체 가능한 실행체"이고, 보존할 데이터는 볼륨에 둔다.
-
-
-
 
 
 
