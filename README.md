@@ -780,7 +780,7 @@ $ curl http://localhost:8082
 - 볼륨(STEP 9)은 Docker가 관리하는 저장 공간이고, 바인드 마운트는 호스트의 경로를 직접 지정한다는 점이 다르다.
 
 -------------------------------------------------------------------------------------- 
-## 📌 Git 설정 및 GitHub 연동
+## 📌 Git 설정 및 GitHub 연동  
 --------------------------------------------------------------------------------------  
 
 ### Git과 GitHub의 역할 차이
@@ -791,5 +791,204 @@ $ curl http://localhost:8082
 | 위치 | 내 PC(로컬) | 인터넷(원격) |
 | 하는 일 | 변경 이력을 커밋으로 기록, 브랜치 관리 | 저장소 공유, 협업, 백업, 제출 |
 | 대표 명령 | `git add`, `git commit` | `git push`, `git pull`(원격과 주고받기) |
+
+
+
+-------------------------------------------------------------------------------------- 
+## 📌 보너스 1. Docker Compose 기초 — 단일 서비스 실행
+-------------------------------------------------------------------------------------- 
+
+### 1. 목표
+- `docker-compose.yml`의 기본 구조를 학습하고, 단일 서비스(웹 서버)를 Compose로 실행한다.
+- 컨테이너 실행 명령(`docker run ...`)이 "문서화된 실행 설정"으로 바뀌는 이유를 이해한다.
+
+### Docker Compose란?
+- 컨테이너의 실행 설정(이미지, 이름, 포트 등)을 **YAML 파일**에 적어 두고, 명령 한 줄로 실행·종료하는 도구이다.
+- 서비스가 하나여도 사용할 수 있고, 이후 여러 서비스를 함께 관리하는 데 확장된다.
+
+```bash
+$ docker compose version                              #Compose 설치 확인
+
+cat > docker-compose.yml << 'EOF'
+services:                                              #실행할 컨테이너(서비스)들을 적는 영역
+  web:                                                 #서비스 이름 (직접 정함)
+    image: my-custom-nginx:1.0                         #사용할 이미지.(직접 빌드한 이미지, 7번에서 만든 것)
+    container_name: compose-web                        #컨테이너 이름 (`docker run --name`에 해당)
+    ports:
+      - "8090:80"                                      #포트 매핑     (`docker run -p`에 해당)
+EOF
+cat docker-compose.yml
+```
+> docker-compose.yml 작성 캡쳐 화면
+<img width="800" height="200" alt="image" src="https://github.com/user-attachments/assets/014f7501-dcc7-4cc2-bafb-f3a8e8ff8cdf" />
+
+
+### Docker Compose 실행 및 확인
+```bash
+docker-compose 실행 및 결과 확인
+```bash
+docker compose up -d                                  #실행
+curl http://localhost:8090
+docker compose down                                   #종료
+docker ps -a
+```
+
+> docker compose 실행및 결과확인
+
+| WSL | 브라우저 |
+|---|---|
+| <img width="900" height="207" alt="image" src="https://github.com/user-attachments/assets/2377c52a-2264-4e11-b971-a00e3c97f827" /> | <img width="631" height="216" alt="image" src="https://github.com/user-attachments/assets/1b95fd9f-0ec8-4d00-bcb2-0966070ad3b7" /> | 
+
+
+### 배운 점: 컨테이너 실행 명령이 "문서화된 실행 설정"으로 바뀌는 이유
+
+**① `docker run`의 옵션이 yml 항목과 1:1로 대응된다**
+
+| `docker run` 옵션 | `docker-compose.yml` 항목 |
+|---|---|
+| `my-custom-nginx:1.0` (이미지) | `image: my-custom-nginx:1.0` |
+| `--name compose-web` | `container_name: compose-web` |
+| `-p 8090:80` | `ports: - "8090:80"` |
+| `-d` | `docker compose up -d`의 `-d` |
+
+**② 실행 방법이 명령이 아니라 파일에 남는다**
+- `docker run`은 옵션을 매번 직접 입력해야 하고, 입력한 내용은 터미널 기록에만 남는다.
+- Compose는 설정을 `docker-compose.yml`에 적어 두고 `docker compose up -d` 한 줄로 실행한다.
+- 파일이 곧 "이 서비스를 어떻게 실행하는지" 설명하는 문서가 되어, 다른 사람이 그 파일만 받아도 같은 구성을 재현할 수 있다.
+
+**③ 같은 설정으로 반복 실행해도 같은 결과가 나온다**
+- `up -d` → `down` → `up -d`를 반복해도 같은 컨테이너(`compose-web`)가 같은 포트(`8090->80`)로 실행되는 것을 확인했다.
+- 옵션을 다시 입력하지 않으므로 오타나 옵션 누락으로 인한 차이가 줄어든다.
+
+**④ 상태 확인과 종료도 같은 단위로 관리된다**
+- `docker compose ps`는 이 yml로 실행한 컨테이너의 상태만 보여주고, `docker compose down`은 컨테이너와 네트워크를 함께 정리한다.
+
+**⑤ Dockerfile과 Compose의 역할 차이**
+
+| 구분 | 정의하는 것 | 이번 실습 |
+|---|---|---|
+| `Dockerfile` | **이미지 내부**에 무엇이 들어가는지 | `nginx:alpine` 위에 내 `index.html`을 복사 |
+| `docker-compose.yml` | 그 이미지를 **어떤 이름·포트로 실행할지** | 이름 `compose-web`, 포트 `8090:80` |
+
+
+--------------------------------------------------------------------------------------
+## 📌 보너스 2. Docker Compose 멀티 컨테이너 — 웹 서버 + 보조 서비스
+--------------------------------------------------------------------------------------
+
+### 1. 목표
+- 웹 서버와 보조 서비스, 2개 서비스를 Compose로 함께 실행한다.
+- 컨테이너 간 네트워크 통신이 가능한지 확인한다.
+- 네트워크와 서비스 디스커버리(서비스 이름으로 서로 찾기) 개념을 이해한다.
+
+### 2. 구성
+
+| 서비스 | 이미지 | 역할 | 호스트 포트 |
+|---|---|---|---|
+| `web` | `my-custom-nginx:1.0` | 웹 서버 (STEP 6에서 만든 이미지) | `8091:80` |
+| `helper` | `alpine` | 보조 서비스. `web`에 요청을 보내 통신을 확인하는 역할 | 없음 |
+
+### 3. 작업 폴더 및 docker-compose.yml 작성
+```bash
+$ mkdir -p ~/codyssey/compose-multi
+$ cd ~/codyssey/compose-multi
+
+$ cat > docker-compose.yml << 'EOF'
+services:
+  web:                                          #서비스 이름. 같은 네트워크에서 **컨테이너끼리 서로를 부르는 주소**가 됨
+    image: my-custom-nginx:1.0
+    container_name: multi-web
+    ports:
+      - "8091:80"
+  helper:                                       #서비스 이름. 같은 네트워크에서 **컨테이너끼리 서로를 부르는 주소**가 됨
+    image: alpine
+    container_name: multi-helper
+    command: sleep infinity
+EOF
+$ cat docker-compose.yml
+```
+
+> docker-compose.yml 화면 캡쳐
+<img width="973" height="542" alt="image" src="https://github.com/user-attachments/assets/d5dbc85b-c39e-4f61-988b-206f5975d4ed" />
+
+### 4. 실행
+
+```bash
+$ docker compose up -d                        #실행
+$ docker compose ps
+
+<img width="1821" height="332" alt="image" src="https://github.com/user-attachments/assets/73a58e60-96ad-4cc1-a55c-caa0a047daab" />
+```
+- 서비스 2개가 한 번에 실행됨
+- Compose가 이 프로젝트 전용 네트워크를 자동으로 생성하고, 같은 네트워크의 서비스는 **서비스 이름**으로 서로를 찾을 수 있음
+
+
+### 5. 컨테이너 간 통신 확인
+
+**① `helper` → `web` HTTP 요청**
+```bash
+$ docker compose exec helper wget -qO- http://web
+```
+- 주소가 `localhost`나 IP가 아니라 **서비스 이름 `web`**이고, 포트는 호스트 포트(8091)가 아니라 **컨테이너 포트(80, 기본값)** 로 통신함
+  
+**② `helper` → `web` 이름 확인 (ping)**
+```bash
+$ docker compose exec helper ping -c 2 web
+```
+- 서비스 이름 `web`이 컨테이너 내부 IP(`172.18.0.2`)로 변환되어 응답이 옴 (서비스 디스커버리)
+  
+| wget 실행 화면 캡처 | ping 실행 화면 캡처 | 
+|---|---|
+| **① `helper` → `web` HTTP 요청** | **`helper` → `web` 이름 확인 (ping)** |
+| <img width="1166" height="212" alt="image" src="https://github.com/user-attachments/assets/c8739ab6-5964-4517-bef9-c70e05e8b755" />| <img width="1073" height="192" alt="image" src="https://github.com/user-attachments/assets/7ef9c7b2-f59f-4aec-a27f-338f883f50a3" />| 
+
+
+**④ 호스트(내 PC)에서 접속**
+```bash
+$ curl http://localhost:8091
+```
+
+| curl http://localhost:8091 화면 캡처 | 브라우저 캡처 | 
+|---|---|
+| <img width="901" height="212" alt="image" src="https://github.com/user-attachments/assets/359bd3a2-666d-4f21-a676-222d653212cb" />
+| <img width="633" height="258" alt="image" src="https://github.com/user-attachments/assets/b73c946d-3d4f-4807-acea-ebe6917cfe50" />| 
+
+
+### 6. 검증 요약
+
+| 검증 항목 | 명령 | 결과 |
+|---|---|---|
+| 서비스 2개 동시 실행 | `docker compose up -d`, `ps` | `multi-web`, `multi-helper` Up |
+| 서비스 이름으로 통신 | `exec helper wget -qO- http://web` | `web`의 HTML 응답 |
+| 서비스 이름 해석 | `exec helper ping -c 2 web` | `web` → `172.18.0.2`, 손실 0% |
+| 요청 도달 | `compose logs web` | `GET / ... 200`, User-Agent `Wget` |
+| 호스트 접속 | `curl`, 브라우저 | `localhost:8091`에서 커스텀 HTML 응답 |
+
+### 7. 배운 점: 네트워크와 서비스 디스커버리
+- **서비스 이름이 주소가 된다**: 같은 Compose 네트워크 안에서는 IP를 몰라도 `http://web`처럼 서비스 이름으로 상대 컨테이너를 찾을 수 있다. 컨테이너가 다시 만들어져 IP가 바뀌어도 이름은 그대로라서 설정이 단순해진다.
+- **컨테이너 간 통신은 컨테이너 포트를 쓴다**: 호스트 포트(8091)는 내 PC에서 접속할 때만 필요하고, 컨테이너끼리는 컨테이너 포트(80)로 직접 통신한다.
+- **호스트에 노출하는 범위를 선택할 수 있다**: `web`만 포트를 열고 `helper`는 열지 않았지만, 둘은 같은 네트워크 안에서 통신된다.
+- **한 파일로 여러 서비스를 관리한다**: 보너스 1의 단일 서비스에서 `services` 아래에 서비스를 추가하는 것만으로 멀티 컨테이너 구성이 되고, `up`/`down` 한 번으로 모두 함께 실행·종료된다.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
