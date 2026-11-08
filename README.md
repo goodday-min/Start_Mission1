@@ -601,35 +601,30 @@ $ docker volume create mydata       #볼륨 생성
 $ docker volume ls
 ```
 
-#### 2. 볼륨 연결 + 데이터 저장
+#### 2. 컨테이너에 연결하고 데이터 저장
 ```bash
-$ docker run -d --name vol-test -v mydata:/data ubuntu sleep infinity
-$ docker exec vol-test bash -c "echo hi > /data/hello.txt && cat /data/hello.txt"
+$ docker run -it --name c1 -v myvol:/data ubuntu bash
+$ echo "hello volume" > /data/test.txt
+-v myvol:/data : 볼륨을 컨테이너의 /data 경로에 마운트
+/data/test.txt에 데이터를 기록합니다.
 ```
-- `-v mydata:/data`: `mydata` 볼륨을 컨테이너의 `/data`에 연결
-- `sleep infinity`: ubuntu 컨테이너가 바로 종료되지 않도록 대기
-- `docker exec`: 실행 중인 컨테이너 안에서 명령 실행 (`/data/hello.txt`에 `hi` 저장 후 출력)
+<img width="1170" height="30" alt="image" src="https://github.com/user-attachments/assets/333b66e9-e0fa-4143-9d53-b80b2b5a86a6" />
 
-![alt text](img/image_15.png)
-
-#### 3. 컨테이너 삭제 (삭제 전/후 비교)
+#### 3. 컨테이너 삭제 
 ```bash
-$ docker rm -f vol-test
-$ docker ps -a
-$ docker volume ls
+$ docker rm c1
 ```
-- 컨테이너(`vol-test`)는 삭제되었지만 볼륨(`mydata`)은 그대로 남아 있음
-
-📷 (삭제 후 docker ps -a, docker volume ls 캡처)
+- 컨테이너(`c1`)는 삭제되었지만 볼륨(`mydata`)은 그대로 남아 있음
 
 #### 4. 새 컨테이너에 같은 볼륨 연결 후 데이터 확인
 ```bash
-$ docker run -d --name vol-test2 -v mydata:/data ubuntu sleep infinity
-$ docker exec vol-test2 bash -c "cat /data/hello.txt"
+docker run -it --name c2 -v myvol:/data ubuntu bash
+cat /data/test.txt   # "hello volume" 출력되면 성공!
 ```
 - 삭제된 컨테이너에서 저장한 `hello.txt`가 새 컨테이너에서도 읽힘 → **데이터 영속성 확인**
 
-📷 (vol-test2 실행 및 cat 결과 캡처)
+<img width="1171" height="72" alt="image" src="https://github.com/user-attachments/assets/c20be40f-c780-4481-9111-ed852c77bc47" />
+
 
 #### 5. 삭제 전/후 비교
 
@@ -673,58 +668,42 @@ $ docker exec vol-test2 bash -c "cat /data/hello.txt"
 | 파일 위치 | 이미지 안에 복사됨 | 호스트 폴더를 연결 |
 | 호스트에서 수정 시 | 반영 안 됨 (재빌드 필요) | 즉시 반영 |
 
-### 3. 실습 전 준비
-```bash
-$ cd ~/codyssey/docker-custom
-$ pwd
-$ docker ps
-(실제 출력으로 교체)
-```
-- 사용 중인 호스트 포트(8080, 8081)와 겹치지 않도록 이번에는 **8082**를 사용
+### 3. 실행 실습
 
 #### 1. 바인드 마운트로 컨테이너 실행
 ```bash
 $ docker run -d --name bind-test -p 8082:80 -v "$(pwd)/site":/usr/share/nginx/html my-custom-nginx:1.0
 $ docker ps
-(실제 출력으로 교체: bind-test, 8082->80)
-```
 - `-v "$(pwd)/site":/usr/share/nginx/html`: 호스트의 `site` 폴더를 컨테이너의 NGINX 웹 루트에 연결
 - `$(pwd)`: 현재 위치(절대 경로)로 치환되며, 바인드 마운트의 호스트 경로는 절대 경로여야 함
-- 이미지 안에 `COPY`로 넣은 파일이 있어도, 마운트된 호스트 폴더가 그 경로를 덮어서 **호스트의 파일이 우선**됨
+```
+> bind-test, 8082->80 실행 화면
 
-📷 (docker run, docker ps 캡처)
+<img width="1200" height="130" alt="image" src="https://github.com/user-attachments/assets/86ebd8f7-4102-4c46-a223-28595f5c8daf" />
 
-#### 2. 변경 전 상태
+
 ```bash
-$ cat site/index.html
+$ cat site/index.html                                                                    #변경 전 상태
 $ curl http://localhost:8082
-```
-📷 (변경 전 cat, curl 캡처)
 
-#### 3. 호스트에서 파일 수정 (컨테이너는 건드리지 않음)
-```bash
-$ sed -i 's/Hello from my custom image!/Hello from BIND MOUNT!/' site/index.html
-```
+#호스트에서 파일 수정 (컨테이너는 건드리지 않음)
+$ sed -i 's/Hello from my custom image!/Hello from BIND MOUNT!/' site/index.html         
+
 - `sed -i 's/찾을글자/바꿀글자/' 파일`: 파일 안의 문구를 찾아 바꿔서 저장
 - 컨테이너 재시작, 이미지 재빌드는 **하지 않음**
 
-#### 4. 변경 후 상태
-```bash
-$ cat site/index.html
+$ cat site/index.html                                                                    #변경 후 상태
 $ curl http://localhost:8082
-(실제 출력으로 교체: Hello from BIND MOUNT!)
 ```
-**브라우저 접속** (주소창 `localhost:8082` + 응답 화면)
-📷 (변경 후 cat, curl, 브라우저 캡처)
 
-#### 5. 변경 전/후 비교
+#### 변경 전/후 비교
 
-| 구분 | 호스트 `site/index.html` | `curl http://localhost:8082` 응답 | 컨테이너 재시작/재빌드 |
+| 구분 | 호스트 `site/index.html` | `curl http://localhost:8082` 응답 | 컨테이너 재시작/재빌드 | 
 |---|---|---|---|
-| 변경 전 | `Hello from my custom image!` | `Hello from my custom image!` | - |
-| 변경 후 | `Hello from BIND MOUNT!` | `Hello from BIND MOUNT!` | **하지 않음** |
+| 변경 전 | <img width="905" height="203" alt="image" src="https://github.com/user-attachments/assets/bc755a11-2602-4d64-bf00-fe1069fbd226" /> | <img width="761" height="242" alt="image" src="https://github.com/user-attachments/assets/4a342210-fd8f-4aa2-8ef6-2705110f65a0" />| - |
+| 변경 후 | <img width="885" height="210" alt="image" src="https://github.com/user-attachments/assets/796d9ee1-9795-42c4-b6db-8addb3798f16" /> | <img width="557" height="227" alt="image" src="https://github.com/user-attachments/assets/c5f9795c-5433-4ae1-9efc-2f2ad7c09441" />| **하지 않음** |
 
-#### 4. 검증 요약
+#### 검증 요약
 
 | 검증 항목 | 명령 | 결과 |
 |---|---|---|
@@ -733,7 +712,7 @@ $ curl http://localhost:8082
 | 호스트 파일 수정 | `sed -i` | `site/index.html` 변경 |
 | 변경 후 응답 | `curl`, 브라우저 | 수정한 문구가 재시작 없이 반영 |
 
-### 5. 정리 (이 단계에서 이해한 점)
+### 정리 (이 단계에서 이해한 점)
 - 바인드 마운트는 호스트와 컨테이너가 같은 파일을 공유해서, 개발 중 코드를 고치면 바로 확인할 수 있다.
 - `COPY`는 이미지에 내용을 고정하는 방식이고, 바인드 마운트는 실행 시점에 호스트 파일을 연결하는 방식이다.
 - 볼륨(STEP 7)은 Docker가 관리하는 저장 공간이고, 바인드 마운트는 호스트의 경로를 직접 지정한다는 점이 다르다.
