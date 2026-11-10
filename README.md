@@ -36,6 +36,17 @@
 ## 📌 STEP 1. 리눅스 CLI     
 -------------------------------------------------------------------------------------- 
 
+<img width="800" height="200" alt="image" src="https://github.com/user-attachments/assets/38a5ea97-bc50-47c5-8c0c-20ef360896e3" /> 
+<br> <br> 
+
+| 용어 | 정체 | 한 줄 설명 | 이번 과제에서 |
+|---|---|---|---|
+| **Ubuntu** | 운영체제 (리눅스의 한 종류) | 윈도우처럼 컴퓨터를 돌리는 OS예요. 리눅스에는 Ubuntu, Debian 등 여러 종류가 있어요. | WSL에 설치한 OS예요. STEP 4에서 `docker run -it ubuntu`로 컨테이너 안에 작은 Ubuntu도 띄웠어요. |
+| **bash** | 셸 (명령 해석 프로그램) | 내가 친 글자를 OS가 알아듣게 전달해요. 터미널에 `ls`, `cd`를 치면 받아 주는 게 bash예요. | `echo $SHELL`을 쳤을 때 `/bin/bash`가 나왔어요. STEP 1에서 확인했어요. |
+| **nginx** | 웹 서버 프로그램 | 브라우저가 주소로 접속하면 HTML 파일을 보내 주는 프로그램이에요. | 이미지(`nginx`, `nginx:alpine`)를 받아 웹 서버로 썼어요. STEP 5에서 내 `index.html`을 얹었고, 8080 포트로 접속해서 봤어요. |
+| **Git Bash** | 윈도우용 bash 프로그램 | Git for Windows를 설치하면 같이 깔려요. 윈도우에서 bash 명령을 흉내 내 주지만 진짜 리눅스는 아니에요. | 이번 과제는 쓰지 않았어요. README 표(STEP 1)에 "리눅스 환경으로 쓸 수 있는 선택지"로만 나와요. |
+
+             
 - 리눅스 터미널에서 환경 정보 확인
   
         uname -a               # 커널 정보 (Linux로 시작하는지)  
